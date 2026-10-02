@@ -9,6 +9,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Image
+from reportlab.platypus.tableofcontents import TableOfContents
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'downloads' / '人情世故指南.pdf'
@@ -44,6 +45,21 @@ def footer(canvas, doc):
     canvas.drawRightString(A4[0]-46, 27, str(doc.page))
     canvas.restoreState()
 
+class GuideDoc(SimpleDocTemplate):
+    def beforeDocument(self):
+        self.chapter_index = 0
+
+    def afterFlowable(self, flowable):
+        if isinstance(flowable, Paragraph) and flowable.style.name == 'chapter':
+            title = flowable.getPlainText()
+            if title == '目录':
+                return
+            key = 'chapter-%d' % self.chapter_index
+            self.chapter_index += 1
+            self.canv.bookmarkPage(key)
+            self.canv.addOutlineEntry(title, key, 0)
+            self.notify('TOCEntry', (0, title, self.page, key))
+
 def build():
     OUT.parent.mkdir(exist_ok=True)
     story = [Spacer(1, 34), Image(str(ROOT/'docs/assets/cover.png'),
@@ -59,6 +75,13 @@ def build():
             if first_title:
                 first_title = False
                 continue
+            if not in_body:
+                story.extend([PageBreak(), Paragraph('目录', chapter)])
+                toc = TableOfContents()
+                toc.levelStyles = [ParagraphStyle('toc', parent=body,
+                    leading=24, spaceAfter=8)]
+                toc.dotsMinLevel = 0
+                story.append(toc)
             story.append(PageBreak())
             in_body = True
             story.append(Paragraph(markup(line[2:]), chapter))
@@ -75,9 +98,9 @@ def build():
                 else:
                     rendered = '<u>' + rendered + '</u>'
             story.append(Paragraph(rendered, style))
-    SimpleDocTemplate(str(OUT), pagesize=A4, rightMargin=46, leftMargin=46,
+    GuideDoc(str(OUT), pagesize=A4, rightMargin=46, leftMargin=46,
         topMargin=45, bottomMargin=49, title='人情世故指南', author='HowToGetAlong',
-        pageCompression=1).build(story, onFirstPage=footer, onLaterPages=footer)
+        pageCompression=1).multiBuild(story, onFirstPage=footer, onLaterPages=footer)
     print(OUT)
 
 if __name__ == '__main__':
