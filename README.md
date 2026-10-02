@@ -8,10 +8,11 @@
 
 10 章 63 条 · 全部为经验建议。
 
-### [阅读与检索](index.html) · [连续阅读](阅读全文.html) · [让 AI 按指南回答](skills/social-situations-guide/SKILL.md) · [下载 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip)
+### [阅读与检索](index.html) · [连续阅读](阅读全文.html) · [让 AI 按指南回答](skills/social-situations-guide/SKILL.md)
 
 | 入口 | 内容 |
 |---|---|
+| 下载 | [PDF](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/downloads/%E4%BA%BA%E6%83%85%E4%B8%96%E6%95%85%E6%8C%87%E5%8D%97.pdf) · [HTML 单文件](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html) · [Markdown](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md) · [项目 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip) |
 | 阅读 | [完整文字版](完整指南.md) · [使用指南](docs/使用指南.md) |
 | 练习 | [交流复盘与场景练习](docs/交流复盘与场景练习.md) |
 | 查阅 | [依据与核实记录](docs/核实记录/v1.4说明.md) · [编写与纠错规范](docs/编写规范.md) |
@@ -74,6 +75,8 @@ python3 tools/build.py
 ```
 
 脚本会检查条目字段、连续编号和交叉引用，生成无需联网的 `index.html`、`阅读全文.html`、`完整指南.md`，同步 Skill 的正文快照。只依赖 Python 标准库。版本与定位在 `project.json` 中维护。
+
+PDF 从生成后的完整正文导出：安装 `reportlab` 后运行 `python3 tools/build_pdf.py`。默认使用 macOS 的中文字体；其他系统可用 `--font /path/to/chinese.ttf` 指定中文 TrueType 字体。正文更新后应重新生成 PDF。
 
 - [编写与纠错规范](docs/编写规范.md)
 - [第一版核实记录](docs/核实记录/初版说明.md)
