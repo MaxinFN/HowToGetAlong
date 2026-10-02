@@ -14,8 +14,8 @@
 |---|---|
 | 下载 | [PDF](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/downloads/%E4%BA%BA%E6%83%85%E4%B8%96%E6%95%85%E6%8C%87%E5%8D%97.pdf) · [HTML 单文件](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html) · [Markdown](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md) · [项目 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip) |
 | 阅读 | [完整文字版](完整指南.md) · [使用指南](docs/使用指南.md) |
-| 练习 | [交流复盘与场景练习](docs/交流复盘与场景练习.md) |
-| 查阅 | [依据与核实记录](docs/核实记录/v1.4说明.md) · [编写与纠错规范](docs/编写规范.md) |
+| 练习 | [交流复盘与场景练习](docs/practice.md) |
+| 查阅 | [依据与核实记录](docs/verification.md) · [编写与纠错规范](docs/editorial-guide.md) |
 
 在 GitHub 上，HTML 链接显示源代码。点击 **Code → Download ZIP**，解压后用浏览器打开 `index.html`，即可离线检索；打开 `阅读全文.html` 可连续阅读。
 
@@ -78,7 +78,7 @@ python3 tools/build.py
 
 PDF 从生成后的完整正文导出：安装 `reportlab` 后运行 `python3 tools/build_pdf.py`。默认使用 macOS 的中文字体；其他系统可用 `--font /path/to/chinese.ttf --bold-font /path/to/chinese-bold.ttf` 指定常规及粗体中文 TrueType 字体。正文更新后应重新生成 PDF。
 
-- [编写与纠错规范](docs/编写规范.md)
+- [编写与纠错规范](docs/editorial-guide.md)
 - [第一版核实记录](docs/核实记录/初版说明.md)
 - [v1.0 扩充与审查记录](docs/核实记录/v1.0说明.md)
 - [平台调研与来源限制](docs/平台调研.md)
@@ -89,4 +89,4 @@ PDF 从生成后的完整正文导出：安装 `reportlab` 后运行 `python3 to
 
 项目结构参考 [HowToLiveBetter](https://github.com/eternity4719/HowToLiveBetter)：问题目录、分章正文、统一条目、公开纠错与配套 Skill。本版文字和页面代码为新写，没有复制其正文或网页代码。
 
-这是内容与阅读功能完整的第一版，仍需真实使用反馈和逐条审校；“完整版”指本次规划的十章已齐，不代表覆盖所有人际情境。可通过仓库的 Issues 提交问题、反例与改进建议，格式参见[编写与纠错规范](docs/编写规范.md)。本项目暂未指定开源许可证；涉及具体制度的新增内容需核对对应规则。
+这是内容与阅读功能完整的第一版，仍需真实使用反馈和逐条审校；“完整版”指本次规划的十章已齐，不代表覆盖所有人际情境。可通过仓库的 Issues 提交问题、反例与改进建议，格式参见[编写与纠错规范](docs/editorial-guide.md)。本项目暂未指定开源许可证；涉及具体制度的新增内容需核对对应规则。
