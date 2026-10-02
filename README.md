@@ -8,7 +8,7 @@
 
 10 章 63 条 · 全部为经验建议。
 
-### [阅读与检索](index.html) · [连续阅读](阅读全文.html) · [让 AI 按指南回答](skills/social-situations-guide/SKILL.md)
+### [阅读与检索](https://kkk-bot.github.io/HowToGetAlong/) · [连续阅读](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html) · [让 AI 按指南回答](skills/social-situations-guide/SKILL.md)
 
 | 入口 | 内容 |
 |---|---|
@@ -17,7 +17,7 @@
 | 练习 | [交流复盘与场景练习](docs/practice.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/practice.md)） |
 | 查阅 | [依据与核实记录](docs/verification.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/verification.md)） · [编写与纠错规范](docs/editorial-guide.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/editorial-guide.md)） |
 
-在 GitHub 上，HTML 链接显示源代码。点击 **Code → Download ZIP**，解压后用浏览器打开 `index.html`，即可离线检索；打开 `阅读全文.html` 可连续阅读。
+点击上方“阅读与检索”或“连续阅读”可直接在线阅读。需要离线使用时，下载项目 ZIP，解压后用浏览器打开 `index.html` 或 `阅读全文.html`。
 
 ---
 
@@ -38,9 +38,9 @@
 
 ## 怎么读
 
-- 打开 [阅读与检索页](index.html)，按关键词、场景和主题查找。页面支持离线使用，不需要登录。
+- 打开 [阅读与检索页](https://kkk-bot.github.io/HowToGetAlong/)，按关键词、场景和主题查找。页面支持离线使用，不需要登录。
 - 在 GitHub 上阅读时，可直接查看下面的分章正文。使用 HTML 页面时，点击仓库的 **Code → Download ZIP**，解压后用浏览器打开 `index.html` 或 `阅读全文.html`。
-- 打开 [连续阅读版](阅读全文.html)，从头阅读全部章节，并可用浏览器打印或保存为 PDF。
+- 打开 [连续阅读版](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html)，从头阅读全部章节，并可用浏览器打印或保存为 PDF。
 - 下载 [完整文字版](完整指南.md)，离线阅读或继续编辑。
 - 不知道从哪里开始，先看 [使用指南](docs/使用指南.md)。
 - 喜欢纯文字，可以按下面的问题读 `book/` 正文。
