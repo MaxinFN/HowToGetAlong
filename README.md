@@ -76,7 +76,7 @@ python3 tools/build.py
 
 脚本会检查条目字段、连续编号和交叉引用，生成无需联网的 `index.html`、`阅读全文.html`、`完整指南.md`，同步 Skill 的正文快照。只依赖 Python 标准库。版本与定位在 `project.json` 中维护。
 
-PDF 从生成后的完整正文导出：安装 `reportlab` 后运行 `python3 tools/build_pdf.py`。默认使用 macOS 的中文字体；其他系统可用 `--font /path/to/chinese.ttf` 指定中文 TrueType 字体。正文更新后应重新生成 PDF。
+PDF 从生成后的完整正文导出：安装 `reportlab` 后运行 `python3 tools/build_pdf.py`。默认使用 macOS 的中文字体；其他系统可用 `--font /path/to/chinese.ttf --bold-font /path/to/chinese-bold.ttf` 指定常规及粗体中文 TrueType 字体。正文更新后应重新生成 PDF。
 
 - [编写与纠错规范](docs/编写规范.md)
 - [第一版核实记录](docs/核实记录/初版说明.md)
