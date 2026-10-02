@@ -8,7 +8,7 @@
 
 10 章 63 条 · 全部为经验建议。
 
-### [阅读与检索](index.html) · [连续阅读](阅读全文.html) · [让 AI 按指南回答](skills/social-situations-guide/SKILL.md)
+### [阅读与检索](index.html) · [连续阅读](阅读全文.html) · [让 AI 按指南回答](skills/social-situations-guide/SKILL.md) · [下载 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip)
 
 | 入口 | 内容 |
 |---|---|
