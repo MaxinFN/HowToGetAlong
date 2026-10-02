@@ -164,6 +164,16 @@ def main():
     body += '</section>'
     css = 'body{max-width:850px;margin:40px auto;padding:0 22px;background:#faf9f4;color:#23392f;font:16px/1.85 -apple-system,"PingFang SC",sans-serif}h1{font-size:34px;line-height:1.4}h2{margin-top:48px}h3{font-size:22px;line-height:1.5}a{color:#225a43}nav,button{font:inherit}button{cursor:pointer}article{border-top:1px solid #dce1d7;padding-top:20px;margin:30px 0;scroll-margin-top:20px}dt{font-size:16px;color:#355d43;font-weight:650;margin-top:22px}dd{margin:8px 0 0;overflow-wrap:anywhere}.example{background:#f0f5ee;border:1px solid #d2dfce;border-radius:6px;padding:8px 12px;width:fit-content;max-width:100%}h4{font-size:16px;color:#355d43;margin:20px 0 8px}#practice p,#practice ul{margin:12px 0}#practice .example{margin-top:8px}@media(max-width:600px){body{margin:24px auto;padding:0 16px}h1{font-size:28px}h3{font-size:21px}.example{padding:8px 10px}}.muted{color:#64736b}@media print{body{background:white;margin:0;font-size:11pt}nav{display:none}.chapter{break-before:page}h3,dt{break-after:avoid}dd{orphans:3;widows:3}a{color:inherit;text-decoration:none}}'
     (ROOT / '阅读全文.html').write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + html.escape(meta['name']) + ' · 完整阅读</title><style>' + css + '</style><body>' + body + '</body></html>', encoding='utf-8')
+    # ASCII-path copies keep GitHub entry points accessible; Chinese files remain the source.
+    for source, destination in {
+        '交流复盘与场景练习.md': 'practice.md',
+        '编写规范.md': 'editorial-guide.md',
+        '核实记录/v1.4说明.md': 'verification.md',
+    }.items():
+        text = (ROOT / 'docs' / source).read_text(encoding='utf-8')
+        if '/' in source:
+            text = text.replace('](../', '](./')
+        (ROOT / 'docs' / destination).write_text(text, encoding='utf-8')
     print(f'已检查 {len(chapters)} 章 {len(entries)} 条及交叉引用；生成检索页、连续阅读页、完整正文，同步 Skill 正文快照。')
 
 if __name__ == '__main__':
