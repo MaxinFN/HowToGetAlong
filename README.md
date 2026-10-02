@@ -14,8 +14,8 @@
 |---|---|
 | 下载 | [PDF](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/downloads/%E4%BA%BA%E6%83%85%E4%B8%96%E6%95%85%E6%8C%87%E5%8D%97.pdf) · [HTML 单文件](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html) · [Markdown](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md) · [项目 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip) |
 | 阅读 | [完整文字版](完整指南.md) · [使用指南](docs/使用指南.md) |
-| 练习 | [交流复盘与场景练习](docs/practice.md) |
-| 查阅 | [依据与核实记录](docs/verification.md) · [编写与纠错规范](docs/editorial-guide.md) |
+| 练习 | [交流复盘与场景练习](docs/practice.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/practice.md)） |
+| 查阅 | [依据与核实记录](docs/verification.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/verification.md)） · [编写与纠错规范](docs/editorial-guide.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/editorial-guide.md)） |
 
 在 GitHub 上，HTML 链接显示源代码。点击 **Code → Download ZIP**，解压后用浏览器打开 `index.html`，即可离线检索；打开 `阅读全文.html` 可连续阅读。
 
