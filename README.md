@@ -16,12 +16,14 @@
 
 | 入口 | 内容 |
 |---|---|
-| 下载 | [PDF](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/downloads/%E4%BA%BA%E6%83%85%E4%B8%96%E6%95%85%E6%8C%87%E5%8D%97.pdf) · [HTML 单文件](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html) · [Markdown](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md) · [项目 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip) |
+| 下载 | [PDF](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/downloads/%E4%BA%BA%E6%83%85%E4%B8%96%E6%95%85%E6%8C%87%E5%8D%97.pdf) · [HTML 检索页](https://kkk-bot.github.io/HowToGetAlong/downloads/html.html) · [Markdown](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md) · [项目 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip) |
 | 阅读 | [完整文字版](完整指南.md) · [使用指南](https://kkk-bot.github.io/HowToGetAlong/docs/usage.html) |
 | 练习 | [交流复盘与场景练习](https://kkk-bot.github.io/HowToGetAlong/docs/practice.html) |
 | 查阅 | [依据与核实记录](https://kkk-bot.github.io/HowToGetAlong/docs/verification.html) · [编写与纠错规范](https://kkk-bot.github.io/HowToGetAlong/docs/editorial-guide.html) · [来源索引](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html#sources) |
 
 点击上方“阅读与检索”或“连续阅读”可直接在线阅读。需要离线使用时，下载项目 ZIP，解压后用浏览器打开 `index.html` 或 `阅读全文.html`。
+
+“HTML 检索页”下载的是项目 ZIP 里的 `index.html`，保存后可直接用浏览器打开，离线搜索和查看全部条目；需要一并使用其他阅读页与下载资料时，请下载项目 ZIP。
 
 ---
 

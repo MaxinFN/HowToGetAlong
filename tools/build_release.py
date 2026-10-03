@@ -13,7 +13,7 @@ from urllib.parse import unquote, urlsplit
 from build import ROOT, read_entries
 from build_docs import PAGES as DOC_SOURCES
 
-PAGES = ['index.html', '阅读全文.html', 'about.html', 'docs/usage.html',
+PAGES = ['index.html', '阅读全文.html', 'about.html', 'downloads/html.html', 'docs/usage.html',
          'docs/practice.html', 'docs/verification.html', 'docs/editorial-guide.html',
          'docs/sources.html', 'docs/strategy-notes.html']
 
