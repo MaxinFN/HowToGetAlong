@@ -25,12 +25,13 @@ for (const [id, key] of [['topic', '主题'], ['person', '对象']]) {
 // A small, inspectable phrase dictionary, rather than splitting every Chinese
 // character. Specific phrases such as “借钱不还” are consumed before “借钱”.
 const concepts = [
+  { aliases: ['敬酒词', '敬酒话术', '敬酒', '祝酒词', '祝酒', '举杯'], matches: ['敬酒', '敬酒词', '祝福'] },
   { aliases: ['借钱不还', '借钱没还', '欠钱不还', '借了不还', '不还钱', '没还钱', '还钱', '还款', '催还', '催款', '催债', '讨债'], matches: ['没还钱', '还款', '催还', '还钱'] },
   { aliases: ['借钱', '借款'], matches: ['借钱', '借款'] },
   { aliases: ['送礼物', '送礼', '随礼', '伴手礼', '随手礼', '礼物', '礼金', '红包', '赠礼'], matches: ['送礼', '随礼', '礼物', '赠礼'] },
   { aliases: ['婉拒', '拒绝', '回绝', '不想答应', '说不'], matches: ['拒绝'] },
   { aliases: ['没回消息', '消息不回', '不回消息', '没回复', '不回复', '未回复', '已读不回'], matches: ['没回复', '没有回复', '未回复', '没有回应'] },
-  { aliases: ['不想喝酒', '不喝酒', '拒酒', '劝酒', '敬酒'], matches: ['不喝酒', '拒酒'] },
+  { aliases: ['不想喝酒', '不喝酒', '拒酒', '劝酒'], matches: ['不喝酒', '拒酒'] },
   { aliases: ['请客吃饭', '聚餐', '饭局', '组局', '酒局'], matches: ['聚餐', '饭局'] },
   { aliases: ['聊天冷场', '接话', '聊天', '闲聊', '冷场'], matches: ['聊天', '话题'] },
   { aliases: ['赞美', '夸赞', '夸人', '夸奖', '表扬'], matches: ['夸赞', '赞美'] },
@@ -181,7 +182,7 @@ function render(save = true) {
     const fields = entry.fields;
     const remaining = Object.entries(fields).filter(([key]) => !['遇到的情况', '判断关键', '先做什么', '可以怎么说', '相关条目'].includes(key));
     const targets = [...fields['相关条目'].matchAll(/(\d+\.\d+)（([^）]+)）/g)].map(match => `<a href="#entry-${match[1]}" data-ref="${match[1]}">${escape(match[1] + ' ' + match[2])}</a>`).join('');
-    return `<article class="card" id="entry-${entry.id}"><div class="cardhead"><span>第 ${entry.chapter} 章 · 第 ${entry.id.split('.')[1]} 条</span><span>经验建议</span></div><h2>${escape(entry.title)}</h2><p class="scene">${escape(fields['遇到的情况'])}</p><p class="judgment"><strong>判断关键</strong>${escape(fields['判断关键'])}</p><p class="action"><strong>先做什么</strong>${escape(fields['先做什么'])}</p><p class="example-label">可以怎么说</p><blockquote>${escape(fields['可以怎么说'])}</blockquote><div class="chips">${entry.tags['主题'].map(tag => `<span class="chip">${escape(tag)}</span>`).join('')}</div><details ${allExpanded ? 'open' : ''}><summary>查看准备、不同情境与调整信号</summary><dl>${remaining.map(([key, value]) => `<dt>${escape(key)}</dt><dd>${escape(value)}</dd>`).join('')}</dl><div class="refs">相关条目：${targets}</div><div class="source"><a href="阅读全文.html#chapter-${entry.chapter}">阅读本章正文 ↗</a></div></details></article>`;
+    return `<article class="card" id="entry-${entry.id}"><div class="cardhead"><span>第 ${entry.chapter} 章 · 第 ${entry.id.split('.')[1]} 条</span><span>经验建议</span></div><h2>${escape(entry.title)}</h2><p class="scene">${escape(fields['遇到的情况'])}</p><p class="judgment"><strong>判断关键</strong>${escape(fields['判断关键'])}</p><p class="action"><strong>先做什么</strong>${escape(fields['先做什么'])}</p><p class="example-label">可以怎么说</p><blockquote>${escape(fields['可以怎么说']).replaceAll('（示例仅供参考，请根据事实情况调整。）', '（示例仅供参考，请根据事实情况调整。）<br><br>').replace(/(<br><br>)$/, '')}</blockquote><div class="chips">${entry.tags['主题'].map(tag => `<span class="chip">${escape(tag)}</span>`).join('')}</div><details ${allExpanded ? 'open' : ''}><summary>查看准备、不同情境与调整信号</summary><dl>${remaining.map(([key, value]) => `<dt>${escape(key)}</dt><dd>${escape(value)}</dd>`).join('')}</dl><div class="refs">相关条目：${targets}</div><div class="source"><a href="阅读全文.html#chapter-${entry.chapter}">阅读本章正文 ↗</a></div></details></article>`;
   }).join('') : '<div class="empty">没有找到相近条目。可以试试更具体的关键词，或清除筛选。</div>';
   $('expand').textContent = allExpanded ? '收起全部细节' : '展开全部细节';
   if (save) saveFilters();

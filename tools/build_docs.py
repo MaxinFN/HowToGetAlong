@@ -29,6 +29,7 @@ ALIASES = {
     'docs/交流复盘与场景练习.md': 'docs/practice.html',
     'docs/核实记录/v1.4说明.md': 'docs/verification.html',
     'docs/核实记录/v1.6说明.md': 'docs/verification.html',
+    'docs/核实记录/v1.7说明.md': 'docs/verification.html',
     'docs/编写规范.md': 'docs/editorial-guide.html',
     'docs/Morris账号整理/学习笔记.md': 'docs/Morris账号整理/阅读笔记.html',
     '完整指南.md': '阅读全文.html',

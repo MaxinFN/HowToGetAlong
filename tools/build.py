@@ -114,6 +114,9 @@ def main():
     (refs / 'v1.6整合记录.md').write_text((ROOT / 'docs/核实记录/v1.6说明.md').read_text(encoding='utf-8').replace('../访谈与博客学习笔记.md', '访谈与博客学习笔记.md'), encoding='utf-8')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [访谈与博客学习笔记](访谈与博客学习笔记.md)\n- [v1.6 整合记录](v1.6整合记录.md)\n')
+    shutil.copyfile(ROOT / 'docs/核实记录/v1.7说明.md', refs / 'v1.7整合记录.md')
+    with (refs / '目录.md').open('a', encoding='utf-8') as stream:
+        stream.write('\n- [v1.7 敬酒表达整合记录](v1.7整合记录.md)\n')
     full = f'# {meta["name"]}\n\n{meta["positioning"]}\n\nv{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条\n\n'
     full += '先判断目标与条件，再做准备、选择行动，最后根据反馈调整。判断框架受《孙子兵法》的权衡、准备与因情境调整思路启发，生活建议仍是本项目的经验建议，未验证效果。\n\n'
     full += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
@@ -149,6 +152,8 @@ def main():
                 escaped = html.escape(value)
                 if key == '相关条目':
                     escaped = re.sub(r'(\d+\.\d+)（([^）]+)）', r'<a href="#entry-\1">\1（\2）</a>', escaped)
+                elif key == '可以怎么说':
+                    escaped = re.sub(r'(（示例仅供参考，请根据事实情况调整。）)(?=.)', r'\1<br><br>', escaped)
                 elif key == '依据':
                     escaped = re.sub(r'\b([SR]\d{2})\b', r'<a href="#source-\1">\1</a>', escaped)
                 body += '<dt>' + html.escape(key) + '</dt><dd' + (' class="example"' if key == '可以怎么说' else '') + '>' + escaped + '</dd>'
@@ -176,7 +181,7 @@ def main():
     for source, destination in {
         '交流复盘与场景练习.md': 'practice.md',
         '编写规范.md': 'editorial-guide.md',
-        '核实记录/v1.6说明.md': 'verification.md',
+        '核实记录/v1.7说明.md': 'verification.md',
     }.items():
         text = (ROOT / 'docs' / source).read_text(encoding='utf-8')
         if '/' in source:

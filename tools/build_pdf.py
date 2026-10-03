@@ -222,6 +222,8 @@ def build(input_path=ROOT / '完整指南.md', output_path=OUT,
                     label, content = text.split('：', 1)
                     rendered = '<b>' + markup(label + '：') + '</b>' + \
                         markup(content, entries, sources, link_entries=related or in_sources)
+            if text.startswith('可以怎么说：'):
+                rendered = re.sub(r'(（示例仅供参考，请根据事实情况调整。）)(?=.)', r'\1<br/><br/>', rendered)
             story.append(Paragraph(rendered, style))
     GuideDoc(str(output_path), pagesize=A4, rightMargin=46, leftMargin=46,
              topMargin=45, bottomMargin=49, title='人情世故指南', author='HowToGetAlong',
