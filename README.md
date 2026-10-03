@@ -12,6 +12,8 @@
 
 10 章 63 条 · 全部为经验建议。
 
+> **免责声明：仅供参考。** 本项目内容仅供学习与交流参考，属于经验建议，不保证适用于所有人或取得特定效果。具体问题请根据事实情况分析，结合自身处境、关系与适用规则独立判断，不宜直接照搬示例。
+
 ### [阅读与检索](https://kkk-bot.github.io/HowToGetAlong/) · [连续阅读](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html) · [让 AI 按指南回答](skills/social-situations-guide/SKILL.md)
 
 | 入口 | 内容 |

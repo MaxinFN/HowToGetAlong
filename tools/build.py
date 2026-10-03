@@ -85,6 +85,8 @@ def main():
     page = page.replace('阅读五章 Markdown', '阅读分章正文')
     page = page.replace('查看代价、后续做法与例外', '查看准备、不同情境与调整信号')
     page = page.replace('v0.1 · 2026-10-02 · 初版', f'v{meta["version"]} · {meta["date"]} ·')
+    disclaimer_html = '<p class="note"><strong>免责声明：仅供参考。</strong> ' + html.escape(meta['disclaimer']) + '</p>'
+    page = page.replace('</div></header>', disclaimer_html + '</div></header>', 1)
     (ROOT / 'index.html').write_text(page, encoding='utf-8')
     download_page = '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>下载 HTML · 人情世故指南</title><style>body{max-width:700px;margin:64px auto;padding:0 24px;background:#f7f5ee;color:#20382f;font:16px/1.9 -apple-system,"PingFang SC",sans-serif}a{color:#225a43}.download{display:inline-block;padding:12px 20px;background:#225a43;color:white;border-radius:8px;text-decoration:none}</style></head><body><h1>下载 HTML 检索页</h1><p>下载的是项目 ZIP 里的 index.html。保存后，用浏览器打开即可离线搜索和查看全部条目。</p><p><a id="download" class="download" href="../index.html" download="index.html">下载 index.html</a></p><p>正在开始下载。如果浏览器没有自动下载，请点击上面的按钮。</p><p>其他阅读页和资料需要配套文件。需要完整离线使用，可 <a href="https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip">下载项目 ZIP</a>。</p><p><a href="../index.html">返回在线检索页</a></p><script>document.getElementById('download').click();</script></body></html>'''
     (ROOT / 'downloads').mkdir(exist_ok=True)
@@ -97,6 +99,7 @@ def main():
     for chapter in chapters:
         shutil.copyfile(ROOT / 'book' / chapter['file'], target / chapter['file'])
     toc = f'# 正文目录\n\n版本：v{meta["version"]}；快照日期：{meta["date"]}；全部为经验建议。\n\n'
+    toc += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
     toc += '\n'.join(f'- [{c["title"]}](book/{c["file"]})' for c in chapters) + '\n'
     practice = (ROOT / 'docs/交流复盘与场景练习.md').read_text(encoding='utf-8')
     shutil.copyfile(ROOT / 'docs/交流复盘与场景练习.md', refs / '交流复盘与场景练习.md')
@@ -107,6 +110,7 @@ def main():
     (refs / 'v1.4整合记录.md').write_text((ROOT / 'docs/核实记录/v1.4说明.md').read_text(encoding='utf-8').replace('../Morris账号整理/学习笔记.md', 'Morris账号公开内容学习笔记.md'), encoding='utf-8')
     full = f'# {meta["name"]}\n\n{meta["positioning"]}\n\nv{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条\n\n'
     full += '先判断目标与条件，再做准备、选择行动，最后根据反馈调整。判断框架受《孙子兵法》的权衡、准备与因情境调整思路启发，生活建议仍是本项目的经验建议，未验证效果。\n\n'
+    full += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
     full += '本版全部为经验建议。示例表达可以调整，效果取决于关系和环境；涉及具体制度请查适用规则。\n\n'
     full += '\n\n'.join((ROOT / 'book' / c['file']).read_text(encoding='utf-8') for c in chapters)
     full += '\n\n' + practice
@@ -125,6 +129,7 @@ def main():
     (ROOT / '完整指南.md').write_text(full.rstrip() + '\n', encoding='utf-8')
     body = '<h1>' + html.escape(meta['name']) + '</h1><p>' + html.escape(meta['positioning']) + '</p>'
     body += f'<p class="muted">v{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条 · 全部为经验建议</p>'
+    body += '<p><strong>免责声明：仅供参考。</strong> ' + html.escape(meta['disclaimer']) + '</p>'
     body += '<p>示例表达可以调整，效果取决于关系和环境。完整阅读情境、代价和例外后再决定；具体制度请查适用规则。</p>'
     body += '<p>先判断目标与条件，再做准备、选择行动，根据反馈调整。框架受《孙子兵法》启发，古文不是这些生活建议有效的证明。<a href="docs/strategy-notes.html">查看来源与转译边界</a>。</p>'
     body += '<p><a href="docs/Morris账号整理/阅读笔记.html">Morris 来源笔记</a> · <a href="docs/verification.html">查看本次整合记录</a>；正文补充仍为经验建议。</p>'
