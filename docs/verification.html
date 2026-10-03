@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="source-sha256" content="4de74f702990af1295e46636fa6260c5220beaaeec9099e92b6fdc1a56a9c7d4"><meta name="description" content="人情世故指南 · v1.14.1 检索与跳转修复"><title>v1.14.1 检索与跳转修复 · 人情世故指南</title><style>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="source-sha256" content="a4e4c260491b7086b4c09f58e779ec23400b1a7f7c38df659d2f6140ddae43ff"><meta name="description" content="人情世故指南 · v1.15 论文与机构文章整合记录"><title>v1.15 论文与机构文章整合记录 · 人情世故指南</title><style>
 :root{--paper:#f7f5ee;--ink:#20382f;--green:#225a43;--muted:#64736b;--line:#dce1d7}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.9;overflow-wrap:anywhere}
 header,main,footer{width:min(100%,860px);margin:auto;padding:0 28px}header{padding-top:24px}.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line);font-size:14px}.brand{font-weight:700}.top nav{display:flex;gap:6px 16px;justify-content:flex-end;flex-wrap:wrap}a{color:var(--green);text-underline-offset:4px}a:focus-visible,summary:focus-visible{outline:3px solid #9fc6af;outline-offset:4px}.top a{text-decoration:none}
@@ -8,15 +8,76 @@ main{padding-top:38px;padding-bottom:35px}h1{font-family:"Songti SC","Noto Serif
 footer{border-top:1px solid var(--line);padding-top:20px;padding-bottom:30px;font-size:13px;color:var(--muted)}footer p{margin-bottom:8px}.footer-links{display:flex;flex-wrap:wrap;gap:8px 18px}
 @media(max-width:600px){header,main,footer{padding-left:18px;padding-right:18px}.top{display:block}.top nav{justify-content:flex-start;margin-top:12px;font-size:14px;gap:6px 14px}main{padding-top:28px}h1{font-size:28px}h2{font-size:21px}h3{font-size:18px}th,td{padding:9px 10px}table{font-size:14px}.toc ul{display:block}.toc li{margin:8px 0}}
 @media print{body{background:white;color:#111;font-size:11pt}header,.toc,.footer-links{display:none}main,footer{width:auto;max-width:none;padding:0}h1{font-size:24pt}h2{font-size:17pt;break-after:avoid}h3{font-size:14pt;break-after:avoid}a{color:inherit}.table-wrap{overflow:visible}pre{white-space:pre-wrap}img{max-height:80vh}footer{margin-top:25px}}
-</style></head><body><header><div class="top"><a class="brand" href="../index.html">人情世故指南</a><nav aria-label="站点导航"><a href="../index.html">阅读与检索</a><a href="../阅读全文.html">连续阅读</a><a href="practice.html">练习</a><a href="../about.html">项目说明</a></nav></div></header><main><h1 id="v1141-检索与跳转修复">v1.14.1 检索与跳转修复</h1>
-<p>日期：2026-10-04。保留 10 章 64 条。</p>
-<h2 id="修复内容">修复内容</h2>
-<ul>
-<li>从条目锚点进入后，搜索、切换筛选或清除筛选会移除旧条目锚点，避免刷新时被旧跳转清空搜索。主动点击相关条目和直接打开条目链接仍能展开对应条目。</li>
-<li>识别“怎么回复”“如何回应”等问题结尾，不再把这些词作为额外的必需关键词。</li>
-<li>7.10 接夸条目补充“老师”对象标签，便于自然语言搜索与对象筛选。</li>
-<li>正文生成时检查空标签与重复标签，防止重复筛选标签再次进入页面。</li>
-</ul>
-<h2 id="验证范围">验证范围</h2>
-<p>运行 tools/test_search.cjs，以模拟 DOM 和网址覆盖自然语言接夸搜索、未知关键词、组合筛选、刷新、锚点跳转、清除筛选及本地文件网址。浏览器验证搜索和刷新、390 像素手机布局及 PDF 下载按钮；统一校验正文快照、网页链接、PDF 指纹与书签。当前浏览器禁止打开 file:// 地址，离线文件未在该浏览器完成实机测试。</p>
-<p>正文建议仍为经验建议，示例免责声明保留。本次不增加社交效果、研究或制度结论。</p></main><footer><p>根据自己的关系与条件选择做法。示例可以调整，经验建议未验证效果。</p><p class="footer-links"><a href="../index.html">阅读与检索</a><a href="../阅读全文.html">连续阅读</a><a href="practice.html">练习</a><a href="../about.html">项目说明</a><a href="https://github.com/kkk-bot/HowToGetAlong/blob/main/docs/verification.md">查看 Markdown 源文档</a></p></footer></body></html>
+</style></head><body><header><div class="top"><a class="brand" href="../index.html">人情世故指南</a><nav aria-label="站点导航"><a href="../index.html">阅读与检索</a><a href="../阅读全文.html">连续阅读</a><a href="practice.html">练习</a><a href="../about.html">项目说明</a></nav></div></header><main><h1 id="v115-论文与机构文章整合记录">v1.15 论文与机构文章整合记录</h1><details class="toc"><summary>本页目录</summary><ul><li><a href="#为什么整合而不新增">为什么整合而不新增</a></li><li><a href="#修改位置">修改位置</a></li><li><a href="#依据如何处理">依据如何处理</a></li><li><a href="#生成与校验范围">生成与校验范围</a></li></ul></details>
+<p>日期：2026-10-04。保留 10 章 64 条，本次深化 12 条现有场景。</p>
+<h2 id="为什么整合而不新增">为什么整合而不新增</h2>
+<p>求助、感谢、接话、倾听、借款、犯错和内推已经有对应条目。新增同义场景会让读者在相近标题间反复选择，因此把具体动作、情境分支和研究边界放回原条目，不以新增数量衡量丰富程度。</p>
+<h2 id="修改位置">修改位置</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">条目</th><th scope="col">实际补充</th><th scope="col">来源</th></tr></thead><tbody>
+<tr>
+<td>1.2 小组分工</td>
+<td>回复渠道、延误通知、缺项调整与成员确认</td>
+<td>A03</td>
+</tr>
+<tr>
+<td>2.1 明确求助</td>
+<td>判断拒绝空间、犹豫时确认一次、接受拒绝</td>
+<td>P01</td>
+</tr>
+<tr>
+<td>2.3 感谢反馈</td>
+<td>无需完美措辞、区分初步感谢与结果反馈</td>
+<td>P06</td>
+</tr>
+<tr>
+<td>3.4 犯错补救</td>
+<td>核实责任、确定补救和更新时间、追踪落实</td>
+<td>P11</td>
+</tr>
+<tr>
+<td>3.5 汇报</td>
+<td>文字要求与语气分开，新增确认修改重点的表达</td>
+<td>P05</td>
+</tr>
+<tr>
+<td>4.1 借钱</td>
+<td>借款与赠与、承担能力、期待变化的讨论清单</td>
+<td>A01</td>
+</tr>
+<tr>
+<td>4.2 迟还</td>
+<td>分期或延期需要重新同意，说明自己的用款限制</td>
+<td>A01</td>
+</tr>
+<tr>
+<td>6.1 建立联系</td>
+<td>自己觉得尴尬不等于对方讨厌，仍尊重明确拒绝</td>
+<td>P10</td>
+</tr>
+<tr>
+<td>6.4 倾听</td>
+<td>询问未知需要、复述后纠正，区分理解与接受建议</td>
+<td>P07、P12、A02</td>
+</tr>
+<tr>
+<td>7.5 接话</td>
+<td>承接细节、追问后听回答，不以问题数量衡量倾听</td>
+<td>P02、P03、P04、P13</td>
+</tr>
+<tr>
+<td>8.1 提意见</td>
+<td>准备未知问题，理解后仍可保留分歧与明确取舍</td>
+<td>A02、P12</td>
+</tr>
+<tr>
+<td>10.1 内推</td>
+<td>久未联系先问信息渠道，不把弱联系当能力背书</td>
+<td>P09</td>
+</tr>
+</tbody></table></div>
+<h2 id="依据如何处理">依据如何处理</h2>
+<p>具体动作和话术继续标为经验建议。论文作为有限范围的研究背景，机构文章作为实践借鉴；来源索引增列 P 与 A 编号，给出原始链接、题录、取得状态和核实日期。来源详情及研究对象、结果、局限见 <a href="research-notes.html">资料笔记</a>。</p>
+<p>P02 连同 2019 年评论 P03、原作者回应 P04 和 2025 年勘误 P13 记录，不把它们算成四份独立实验证据。本次未复算数据或完成所有论文的全文、更正、重复研究检查，只取得摘要的材料在正文依据中说明；不采用效应量、成功率或“人性规律”的断言。</p>
+<p>P08 的团队心理安全仍留在资料库，未据摘要把组织层面的关联推广成个人话术有效的因果结论。借款只借鉴 CFPB 的沟通维度，不移植美国财税及法律规则。</p>
+<h2 id="生成与校验范围">生成与校验范围</h2>
+<p>同步检索页、连续阅读、Markdown、Skill 快照与 PDF。保持原有条号、封面数量、示例免责声明、无下划线 PDF、粗体副标题、目录与书签。校验来源编号、来源外链、PDF 来源书签及网页锚点，防止 P/A 编号只显示文字却无法跳转。</p></main><footer><p>根据自己的关系与条件选择做法。示例可以调整，经验建议未验证效果。</p><p class="footer-links"><a href="../index.html">阅读与检索</a><a href="../阅读全文.html">连续阅读</a><a href="practice.html">练习</a><a href="../about.html">项目说明</a><a href="https://github.com/kkk-bot/HowToGetAlong/blob/main/docs/verification.md">查看 Markdown 源文档</a></p></footer></body></html>

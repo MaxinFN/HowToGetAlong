@@ -44,9 +44,16 @@ def validate():
         source = ROOT / 'book' / chapter['file']
         if source.read_bytes() != (snapshots / 'book' / chapter['file']).read_bytes():
             raise ValueError(f'Skill 正文快照过期：{source.name}')
-    for original, snapshot in [('docs/交流复盘与场景练习.md', '交流复盘与场景练习.md')]:
-        if (ROOT / original).read_bytes() != (snapshots / snapshot).read_bytes():
-            raise ValueError(f'Skill 练习快照过期：{snapshot}')
+    for original, snapshot in [('docs/交流复盘与场景练习.md', '交流复盘与场景练习.md'),
+                               ('docs/研究资料整理.md', '研究资料整理.md'),
+                               ('docs/核实记录/v1.15说明.md', 'v1.15整合记录.md')]:
+        expected = (ROOT / original).read_text(encoding='utf-8')
+        if snapshot == '研究资料整理.md':
+            expected = expected.replace('核实记录/v1.15说明.md', 'v1.15整合记录.md').replace('](editorial-guide.md)', '](https://kkk-bot.github.io/HowToGetAlong/docs/editorial-guide.html)')
+        elif snapshot == 'v1.15整合记录.md':
+            expected = expected.replace('../研究资料整理.md', '研究资料整理.md')
+        if expected != (snapshots / snapshot).read_text(encoding='utf-8'):
+            raise ValueError(f'Skill 文档快照过期：{snapshot}')
     source = ROOT / '完整指南.md'
     full = source.read_text(encoding='utf-8')
     for chapter in chapters:
@@ -109,7 +116,11 @@ def validate():
         if f'{entry["id"]} {entry["title"]}' not in outline_titles:
             raise ValueError(f'PDF 缺少条目书签：{entry["id"]}')
     sources = load_sources()
-    referenced = set(re.findall(r'\b[SR]\d{2}\b', full))
+    referenced = set(re.findall(r'\b[SRPA]\d{2}\b', full))
+    outline_sources = {match[1] for title in outline_titles
+                       if (match := re.match(r'^([SRPA]\d{2})\b', title))}
+    if referenced - outline_sources:
+        raise ValueError(f'PDF 缺少来源书签：{sorted(referenced - outline_sources)}')
     uris = set()
     for page in pdf.pages:
         for ref in page.get('/Annots', []):
