@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""Build and validate the site, Markdown, Skill snapshot and complete PDF together."""
+import argparse
+import hashlib
+from html.parser import HTMLParser
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+from urllib.parse import unquote, urlsplit
+
+from build import ROOT, read_entries
+from build_docs import PAGES as DOC_SOURCES
+
+PAGES = ['index.html', '阅读全文.html', 'about.html', 'docs/usage.html',
+         'docs/practice.html', 'docs/verification.html', 'docs/editorial-guide.html',
+         'docs/sources.html', 'docs/strategy-notes.html']
+
+
+class Links(HTMLParser):
+    def __init__(self, source):
+        super().__init__()
+        self.ids, self.links = set(), []
+        self.feed(source)
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if attrs.get('id'):
+            self.ids.add(attrs['id'])
+        if tag == 'a' and attrs.get('href'):
+            self.links.append(attrs['href'])
+        elif tag == 'img' and attrs.get('src'):
+            self.links.append(attrs['src'])
+
+
+def validate():
+    from pypdf import PdfReader
+    entries, chapters = read_entries()
+    snapshots = ROOT / 'skills/social-situations-guide/references'
+    for chapter in chapters:
+        source = ROOT / 'book' / chapter['file']
+        if source.read_bytes() != (snapshots / 'book' / chapter['file']).read_bytes():
+            raise ValueError(f'Skill 正文快照过期：{source.name}')
+    for original, snapshot in [('docs/交流复盘与场景练习.md', '交流复盘与场景练习.md')]:
+        if (ROOT / original).read_bytes() != (snapshots / snapshot).read_bytes():
+            raise ValueError(f'Skill 练习快照过期：{snapshot}')
+    source = ROOT / '完整指南.md'
+    full = source.read_text(encoding='utf-8')
+    for chapter in chapters:
+        if (ROOT / 'book' / chapter['file']).read_text(encoding='utf-8').strip() not in full:
+            raise ValueError(f'完整 Markdown 正文过期：{chapter["file"]}')
+    if (ROOT / 'docs/交流复盘与场景练习.md').read_text(encoding='utf-8').strip() not in full:
+        raise ValueError('完整 Markdown 练习过期')
+    for entry in entries:
+        if f'### {entry["id"].split(".")[1]}. {entry["title"]}' not in full:
+            raise ValueError(f'完整 Markdown 缺少条目：{entry["id"]}')
+    index = (ROOT / 'index.html').read_text(encoding='utf-8')
+    data = re.search(r'<script id="entries" type="application/json">(.*?)</script>', index, re.S)
+    if not data or json.loads(data[1]) != entries:
+        raise ValueError('检索页正文数据与 book/ 不一致')
+    if (ROOT / 'tools/search.js').read_text(encoding='utf-8') not in index:
+        raise ValueError('检索页脚本过期')
+
+    parsed = {}
+    for original, output in DOC_SOURCES.items():
+        digest = hashlib.sha256((ROOT / original).read_bytes()).hexdigest()
+        if f'name="source-sha256" content="{digest}"' not in (ROOT / output).read_text(encoding='utf-8'):
+            raise ValueError(f'文档阅读页过期：{output}')
+    for name in PAGES:
+        file = ROOT / name
+        parsed[file] = Links(file.read_text(encoding='utf-8'))
+    for file, page in list(parsed.items()):
+        for link in page.links:
+            url = urlsplit(link)
+            if url.scheme or url.netloc:
+                continue
+            target = (file.parent / unquote(url.path)).resolve() if url.path else file
+            if not target.is_relative_to(ROOT):
+                raise ValueError(f'网页链接超出项目：{file.name} → {link}')
+            if not target.exists():
+                raise ValueError(f'网页链接缺失：{file.name} → {link}')
+            if url.fragment and target.suffix == '.html':
+                if target not in parsed:
+                    parsed[target] = Links(target.read_text(encoding='utf-8'))
+                # Search cards are rendered by the inline JavaScript.
+                dynamic = target == ROOT / 'index.html' and unquote(url.fragment) in {
+                    f'entry-{entry["id"]}' for entry in entries}
+                if unquote(url.fragment) not in parsed[target].ids and not dynamic:
+                    raise ValueError(f'网页锚点缺失：{file.name} → {link}')
+
+    pdf = PdfReader(ROOT / 'downloads/人情世故指南.pdf')
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    if digest not in (pdf.metadata.subject or ''):
+        raise ValueError('PDF 正文指纹不一致，请重新生成')
+    outline_titles = []
+    def visit(items):
+        for item in items:
+            if isinstance(item, list):
+                visit(item)
+            else:
+                outline_titles.append(item.title)
+                if pdf.get_destination_page_number(item) is None:
+                    raise ValueError(f'PDF 书签没有有效页面：{item.title}')
+    visit(pdf.outline)
+    for entry in entries:
+        if f'{entry["id"]} {entry["title"]}' not in outline_titles:
+            raise ValueError(f'PDF 缺少条目书签：{entry["id"]}')
+    sources = json.loads((ROOT / 'docs/Morris账号整理/来源与条目.json').read_text(encoding='utf-8'))
+    referenced = set(re.findall(r'\bS\d{2}\b', full))
+    uris = set()
+    for page in pdf.pages:
+        for ref in page.get('/Annots', []):
+            annotation = ref.get_object()
+            action = annotation.get('/A', {})
+            if action.get('/S') == '/URI':
+                uris.add(action.get('/URI'))
+    for item in sources['sources']:
+        if item['id'] in referenced and item['url'] not in uris:
+            raise ValueError(f'PDF 缺少来源外链：{item["id"]}')
+    print(f'校验通过：{len(entries)} 条正文、Skill 快照、{len(PAGES)} 个网页入口、'
+          f'{len(pdf.pages)} 页 PDF、条目书签及 {len(referenced)} 个来源链接。')
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check', action='store_true', help='Only validate existing outputs')
+    parser.add_argument('--font', help='Chinese TrueType font used for PDF')
+    parser.add_argument('--bold-font', help='Bold Chinese TrueType font used for PDF')
+    args = parser.parse_args()
+    try:
+        import reportlab  # noqa: F401
+        import pypdf  # noqa: F401
+    except ImportError as error:
+        parser.error(f'缺少 {error.name}；请先安装 reportlab 和 pypdf')
+    if not args.check:
+        fonts = []
+        for option, value in [('--font', args.font), ('--bold-font', args.bold_font)]:
+            if value:
+                fonts.extend([option, value])
+        for script, options in [('build.py', []), ('build_docs.py', []), ('build_pdf.py', fonts)]:
+            subprocess.run([sys.executable, str(ROOT / 'tools' / script), *options], check=True)
+    validate()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,74 +1,182 @@
 """Generate the complete PDF from 完整指南.md (requires reportlab)."""
+import argparse
+import hashlib
 from pathlib import Path
 import re
-from xml.sax.saxutils import escape
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-import argparse
+from urllib.parse import urljoin
+from xml.sax.saxutils import escape, quoteattr
+
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Image
 from reportlab.platypus.tableofcontents import TableOfContents
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'downloads' / '人情世故指南.pdf'
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--font', default='/System/Library/Fonts/STHeiti Light.ttc',
-    help='Path to a Chinese TrueType font (TTF or TTC); embedded in the PDF')
-parser.add_argument('--bold-font', default='/System/Library/Fonts/STHeiti Medium.ttc',
-    help='Path to the bold Chinese TrueType font; embedded in the PDF')
-args = parser.parse_args()
-pdfmetrics.registerFont(TTFont('GuideChinese', args.font, subfontIndex=0))
-pdfmetrics.registerFont(TTFont('GuideChineseBold', args.bold_font, subfontIndex=0))
-pdfmetrics.registerFontFamily('GuideChinese', normal='GuideChinese',
-    bold='GuideChineseBold', italic='GuideChinese', boldItalic='GuideChineseBold')
-green = colors.HexColor('#243d32')
-body = ParagraphStyle('body', fontName='GuideChinese', fontSize=10.5,
-    leading=17, textColor=green, spaceAfter=7, wordWrap='CJK')
-chapter = ParagraphStyle('chapter', parent=body, fontName='GuideChineseBold', fontSize=20, leading=29,
-    spaceAfter=18, keepWithNext=True)
-heading = ParagraphStyle('heading', parent=body, fontName='GuideChineseBold', fontSize=14, leading=22,
-    spaceBefore=14, spaceAfter=10, keepWithNext=True)
-example = ParagraphStyle('example', parent=body, backColor=colors.HexColor('#eef4ed'),
-    borderPadding=8, spaceBefore=4, spaceAfter=12)
+DEFAULT_FONT = '/System/Library/Fonts/STHeiti Light.ttc'
+DEFAULT_BOLD_FONT = '/System/Library/Fonts/STHeiti Medium.ttc'
+REPO_URL = 'https://github.com/kkk-bot/HowToGetAlong/blob/main/'
+GREEN = colors.HexColor('#243d32')
+CHAPTER_RE = re.compile(r'^(\d+)\.\s+(.+)$')
+ENTRY_RE = re.compile(r'^(\d+(?:\.\d+)?)\.\s+(.+)$')
+SOURCE_RE = re.compile(r'^(S\d{2})\b[.：:、\s-]*(.*)$')
+INLINE_RE = re.compile(r'\[([^\]]+)\]\(([^)]+)\)|\*\*(.+?)\*\*|`([^`]+)`')
 
-def markup(text):
-    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'\1', text)
-    return escape(text.replace('**', '').replace('`', ''))
+
+def entry_key(number):
+    return 'entry-' + number.replace('.', '-')
+
+
+def discover_targets(lines):
+    """Only numbered chapters and their ### headings are guide entries."""
+    entries, sources = set(), set()
+    chapter_number = None
+    in_sources = False
+    for line in lines:
+        line = line.strip()
+        if line.startswith('# '):
+            title = line[2:]
+            match = CHAPTER_RE.match(title)
+            chapter_number = match.group(1) if match else None
+            in_sources = title == '来源索引'
+        elif line.startswith('### ') and chapter_number is not None:
+            match = ENTRY_RE.match(line[4:])
+            if match:
+                number = match.group(1)
+                entries.add(number if '.' in number else chapter_number + '.' + number)
+        elif line.startswith(('## ', '### ')) and in_sources:
+            match = SOURCE_RE.match(line.lstrip('# '))
+            if match:
+                sources.add(match.group(1))
+    return entries, sources
+
+
+def markup(text, entries=(), sources=(), link_entries=False):
+    """Keep Markdown links, emphasis, and verified internal references."""
+    def plain(part):
+        pattern = r'(?<![\w.])(\d+\.\d+)(?![\w.])|\b(S\d{2})\b'
+        rendered, position = [], 0
+        for match in re.finditer(pattern, part):
+            rendered.append(escape(part[position:match.start()]))
+            number, source = match.groups()
+            label = match.group(0)
+            if number and link_entries and number in entries:
+                target = entry_key(number)
+            elif source and source in sources:
+                target = 'source-' + source
+            else:
+                target = None
+            rendered.append('<link href="#' + target + '">' + label + '</link>'
+                            if target else escape(label))
+            position = match.end()
+        rendered.append(escape(part[position:]))
+        return ''.join(rendered)
+
+    rendered, position = [], 0
+    for match in INLINE_RE.finditer(text):
+        rendered.append(plain(text[position:match.start()]))
+        label, href, bold, code = match.groups()
+        if label is not None:
+            if href.startswith(('https://', 'http://', 'mailto:')):
+                destination = href
+            elif href.startswith('#'):
+                destination = href
+            else:
+                destination = urljoin(REPO_URL, href)
+            # Link labels must not contain nested links.
+            rendered.append('<link href=' + quoteattr(destination) + '>' +
+                            escape(label.replace('**', '').replace('`', '')) + '</link>')
+        elif bold is not None:
+            rendered.append('<b>' + plain(bold) + '</b>')
+        else:
+            rendered.append(escape(code))
+        position = match.end()
+    rendered.append(plain(text[position:]))
+    return ''.join(rendered)
+
+
+def register_fonts(font_path, bold_font_path, lines):
+    visible_text = '\n'.join(line for line in lines if not line.strip().startswith('<!--'))
+    visible_text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', visible_text)
+    for name, path in [('GuideChinese', font_path), ('GuideChineseBold', bold_font_path)]:
+        path = Path(path).expanduser()
+        if not path.is_file():
+            raise ValueError('找不到中文字体：' + str(path) + '。请用 --font 与 --bold-font 指定 TTF/TTC 字体。')
+        try:
+            font = TTFont(name, str(path), subfontIndex=0)
+        except (TTFError, OSError) as error:
+            raise ValueError('无法读取中文 TrueType 字体：' + str(path) + '（' + str(error) + '）') from error
+        missing = sorted({char for char in visible_text if not char.isspace() and
+                          ord(char) not in font.face.charToGlyph})
+        if missing:
+            raise ValueError('字体 ' + path.name + ' 缺少字符：' + ''.join(missing[:20]) +
+                             '。请改用覆盖这些字符的中文 TTF/TTC 字体。')
+        pdfmetrics.registerFont(font)
+    pdfmetrics.registerFontFamily('GuideChinese', normal='GuideChinese',
+                                 bold='GuideChineseBold', italic='GuideChinese',
+                                 boldItalic='GuideChineseBold')
+
+
+def styles():
+    body = ParagraphStyle('body', fontName='GuideChinese', fontSize=10.5,
+                          leading=17, textColor=GREEN, spaceAfter=7, wordWrap='CJK')
+    chapter = ParagraphStyle('chapter', parent=body, fontName='GuideChineseBold',
+                             fontSize=20, leading=29, spaceAfter=18, keepWithNext=True)
+    heading = ParagraphStyle('heading', parent=body, fontName='GuideChineseBold',
+                             fontSize=14, leading=22, spaceBefore=14, spaceAfter=10,
+                             keepWithNext=True)
+    example = ParagraphStyle('example', parent=body, backColor=colors.HexColor('#eef4ed'),
+                             borderPadding=8, spaceBefore=4, spaceAfter=12)
+    return body, chapter, heading, example
+
 
 def footer(canvas, doc):
     canvas.saveState()
     canvas.setFont('GuideChinese', 9)
     canvas.setFillColor(colors.HexColor('#65756b'))
     canvas.drawString(46, 27, '人情世故指南 · 经验建议')
-    canvas.drawRightString(A4[0]-46, 27, str(doc.page))
+    canvas.drawRightString(A4[0] - 46, 27, str(doc.page))
     canvas.restoreState()
 
-class GuideDoc(SimpleDocTemplate):
-    def beforeDocument(self):
-        self.chapter_index = 0
 
+class GuideDoc(SimpleDocTemplate):
     def afterFlowable(self, flowable):
-        if isinstance(flowable, Paragraph) and flowable.style.name == 'chapter':
-            title = flowable.getPlainText()
-            if title == '目录':
-                return
-            key = 'chapter-%d' % self.chapter_index
-            self.chapter_index += 1
-            self.canv.bookmarkPage(key)
-            self.canv.addOutlineEntry(title, key, 0)
+        key = getattr(flowable, '_guide_bookmark', None)
+        if not key:
+            return
+        title = flowable.getPlainText()
+        # Target the heading position instead of always returning to the page top.
+        self.canv.bookmarkHorizontalAbsolute(key, self.frame._y + flowable.height)
+        self.canv.addOutlineEntry(title, key, getattr(flowable, '_guide_outline_level', 0))
+        if getattr(flowable, '_guide_toc', False):
             self.notify('TOCEntry', (0, title, self.page, key))
 
-def build():
-    OUT.parent.mkdir(exist_ok=True)
-    story = [Spacer(1, 34), Image(str(ROOT/'docs/assets/cover.png'),
-        width=A4[0]-92, height=(A4[0]-92)*9/16), Spacer(1, 30)]
-    lines = (ROOT/'完整指南.md').read_text().splitlines()
-    first_title = True
-    in_body = False
+
+def bookmarked_paragraph(text, style, key, level=0, toc=False):
+    paragraph = Paragraph(text, style)
+    paragraph._guide_bookmark = key
+    paragraph._guide_outline_level = level
+    paragraph._guide_toc = toc
+    return paragraph
+
+
+def build(input_path=ROOT / '完整指南.md', output_path=OUT,
+          font_path=DEFAULT_FONT, bold_font_path=DEFAULT_BOLD_FONT):
+    input_path, output_path = Path(input_path), Path(output_path)
+    lines = input_path.read_text(encoding='utf-8').splitlines()
+    register_fonts(font_path, bold_font_path, lines)
+    entries, sources = discover_targets(lines)
+    body, chapter, heading, example = styles()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    story = [Spacer(1, 34), Image(str(ROOT / 'docs/assets/cover.png'),
+             width=A4[0] - 92, height=(A4[0] - 92) * 9 / 16), Spacer(1, 30)]
+    first_title, in_body, in_sources = True, False, False
+    chapter_number, chapter_index = None, 0
     for line in lines:
-        line=line.strip()
+        line = line.strip()
         if not line or line.startswith('<!--'):
             continue
         if line.startswith('# '):
@@ -78,30 +186,69 @@ def build():
             if not in_body:
                 story.extend([PageBreak(), Paragraph('目录', chapter)])
                 toc = TableOfContents()
-                toc.levelStyles = [ParagraphStyle('toc', parent=body,
-                    leading=24, spaceAfter=8)]
+                toc.levelStyles = [ParagraphStyle('toc', parent=body, leading=24, spaceAfter=8)]
                 toc.dotsMinLevel = 0
                 story.append(toc)
             story.append(PageBreak())
             in_body = True
-            story.append(Paragraph(markup(line[2:]), chapter))
+            title = line[2:]
+            match = CHAPTER_RE.match(title)
+            chapter_number = match.group(1) if match else None
+            in_sources = title == '来源索引'
+            key = 'chapter-' + str(chapter_index)
+            chapter_index += 1
+            story.append(bookmarked_paragraph(markup(title), chapter, key, toc=True))
         elif line.startswith(('## ', '### ')):
-            story.append(Paragraph(markup(line.lstrip('# ')), heading))
+            title = line.lstrip('# ')
+            entry_match = ENTRY_RE.match(title) if line.startswith('### ') and chapter_number else None
+            source_match = SOURCE_RE.match(title) if in_sources else None
+            if entry_match:
+                number, label = entry_match.groups()
+                number = number if '.' in number else chapter_number + '.' + number
+                story.append(bookmarked_paragraph(markup(number + ' ' + label), heading,
+                                                   entry_key(number), level=1))
+            elif source_match:
+                story.append(bookmarked_paragraph(markup(title), heading,
+                                                   'source-' + source_match.group(1), level=1))
+            else:
+                story.append(Paragraph(markup(title), heading))
         else:
             text = line[2:] if line.startswith('- ') else line
-            style = example if text.startswith(('可以怎么说：','原创示例：')) else body
-            rendered = markup(text)
+            style = example if text.startswith(('可以怎么说：', '原创示例：')) else body
+            related = text.startswith('相关条目：')
+            rendered = markup(text, entries, sources, link_entries=related or in_sources)
             if in_body:
                 if '：' in text and line.startswith('- '):
                     label, content = text.split('：', 1)
-                    rendered = '<b>' + markup(label + '：') + '</b><u>' + markup(content) + '</u>'
+                    rendered = '<b>' + markup(label + '：') + '</b><u>' + \
+                        markup(content, entries, sources, link_entries=related or in_sources) + '</u>'
                 else:
                     rendered = '<u>' + rendered + '</u>'
             story.append(Paragraph(rendered, style))
-    GuideDoc(str(OUT), pagesize=A4, rightMargin=46, leftMargin=46,
-        topMargin=45, bottomMargin=49, title='人情世故指南', author='HowToGetAlong',
-        pageCompression=1).multiBuild(story, onFirstPage=footer, onLaterPages=footer)
-    print(OUT)
+    GuideDoc(str(output_path), pagesize=A4, rightMargin=46, leftMargin=46,
+             topMargin=45, bottomMargin=49, title='人情世故指南', author='HowToGetAlong',
+             subject='Source SHA256: ' + hashlib.sha256(input_path.read_bytes()).hexdigest(),
+             pageCompression=1).multiBuild(story, onFirstPage=footer, onLaterPages=footer)
+    return output_path
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--font', default=DEFAULT_FONT,
+                        help='Path to a Chinese TrueType font (TTF or TTC); embedded in the PDF')
+    parser.add_argument('--bold-font', default=DEFAULT_BOLD_FONT,
+                        help='Path to the bold Chinese TrueType font; embedded in the PDF')
+    parser.add_argument('--input', type=Path, default=ROOT / '完整指南.md',
+                        help='Markdown source path (defaults to 完整指南.md)')
+    parser.add_argument('--output', type=Path, default=OUT,
+                        help='PDF output path (defaults to downloads/人情世故指南.pdf)')
+    args = parser.parse_args()
+    try:
+        output = build(args.input, args.output, args.font, args.bold_font)
+    except (ValueError, FileNotFoundError) as error:
+        parser.error(str(error))
+    print(output)
+
 
 if __name__ == '__main__':
-    build()
+    main()

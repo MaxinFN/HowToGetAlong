@@ -13,9 +13,9 @@
 | 入口 | 内容 |
 |---|---|
 | 下载 | [PDF](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/downloads/%E4%BA%BA%E6%83%85%E4%B8%96%E6%95%85%E6%8C%87%E5%8D%97.pdf) · [HTML 单文件](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html) · [Markdown](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md) · [项目 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip) |
-| 阅读 | [完整文字版](完整指南.md) · [使用指南](docs/使用指南.md) |
-| 练习 | [交流复盘与场景练习](docs/practice.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/practice.md)） |
-| 查阅 | [依据与核实记录](docs/verification.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/verification.md)） · [编写与纠错规范](docs/editorial-guide.md)（[纯文字备用](https://raw.githubusercontent.com/kkk-bot/HowToGetAlong/main/docs/editorial-guide.md)） |
+| 阅读 | [完整文字版](完整指南.md) · [使用指南](https://kkk-bot.github.io/HowToGetAlong/docs/usage.html) |
+| 练习 | [交流复盘与场景练习](https://kkk-bot.github.io/HowToGetAlong/docs/practice.html) |
+| 查阅 | [依据与核实记录](https://kkk-bot.github.io/HowToGetAlong/docs/verification.html) · [编写与纠错规范](https://kkk-bot.github.io/HowToGetAlong/docs/editorial-guide.html) · [来源索引](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html#sources) |
 
 点击上方“阅读与检索”或“连续阅读”可直接在线阅读。需要离线使用时，下载项目 ZIP，解压后用浏览器打开 `index.html` 或 `阅读全文.html`。
 
@@ -38,11 +38,11 @@
 
 ## 怎么读
 
-- 打开 [阅读与检索页](https://kkk-bot.github.io/HowToGetAlong/)，按关键词、场景和主题查找。页面支持离线使用，不需要登录。
+- 打开 [阅读与检索页](https://kkk-bot.github.io/HowToGetAlong/)，按关键词、场景和主题查找，也可以输入“怎么送礼”“借钱不还”等常见说法。搜索条件会保留在网址里，刷新或分享链接可以恢复。页面支持离线使用，不需要登录。
 - 在 GitHub 上阅读时，可直接查看下面的分章正文。使用 HTML 页面时，点击仓库的 **Code → Download ZIP**，解压后用浏览器打开 `index.html` 或 `阅读全文.html`。
 - 打开 [连续阅读版](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html)，从头阅读全部章节，并可用浏览器打印或保存为 PDF。
 - 下载 [完整文字版](完整指南.md)，离线阅读或继续编辑。
-- 不知道从哪里开始，先看 [使用指南](docs/使用指南.md)。
+- 不知道从哪里开始，先看 [使用指南](https://kkk-bot.github.io/HowToGetAlong/docs/usage.html)。
 - 喜欢纯文字，可以按下面的问题读 `book/` 正文。
 - 每条的“可以怎么说”都是本项目拟写的示例，不是平台原话，也不保证对方接受。
 - 展开“准备、不同情境与调整信号”，区分普通朋友、亲近关系、职责内请求等条件，别只照搬一句话。
@@ -71,12 +71,13 @@
 正文在 `book/`，每条的标签用于页面筛选。修改正文后运行：
 
 ```bash
-python3 tools/build.py
+python3 -m pip install reportlab pypdf
+python3 tools/build_release.py
 ```
 
-脚本会检查条目字段、连续编号和交叉引用，生成无需联网的 `index.html`、`阅读全文.html`、`完整指南.md`，同步 Skill 的正文快照。只依赖 Python 标准库。版本与定位在 `project.json` 中维护。
+统一脚本会检查条目字段、连续编号和交叉引用，生成检索页、连续阅读页、练习与查阅页、完整 Markdown、PDF，并同步 Skill 正文快照。最后校验网页链接、PDF 条目书签和来源链接，避免发布旧的导出文件。版本与定位在 `project.json` 中维护。
 
-PDF 从生成后的完整正文导出：安装 `reportlab` 后运行 `python3 tools/build_pdf.py`。默认使用 macOS 的中文字体；其他系统可用 `--font /path/to/chinese.ttf --bold-font /path/to/chinese-bold.ttf` 指定常规及粗体中文 TrueType 字体。正文更新后应重新生成 PDF。
+PDF 默认使用 macOS 的中文字体。其他系统可给统一命令加上 `--font /path/to/chinese.ttf --bold-font /path/to/chinese-bold.ttf`，指定常规及粗体中文 TrueType 字体。只检查已生成文件时运行 `python3 tools/build_release.py --check`。搜索实现放在 `tools/search.js`，正文与标签仍以 `book/` 为准。
 
 - [编写与纠错规范](docs/editorial-guide.md)
 - [第一版核实记录](docs/核实记录/初版说明.md)
