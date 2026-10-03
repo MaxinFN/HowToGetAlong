@@ -69,7 +69,7 @@ def markup(text, entries=(), sources=(), link_entries=False):
                 target = 'source-' + source
             else:
                 target = None
-            rendered.append('<link href="#' + target + '">' + label + '</link>'
+            rendered.append('<link underline="0" href="#' + target + '">' + label + '</link>'
                             if target else escape(label))
             position = match.end()
         rendered.append(escape(part[position:]))
@@ -87,7 +87,7 @@ def markup(text, entries=(), sources=(), link_entries=False):
             else:
                 destination = urljoin(REPO_URL, href)
             # Link labels must not contain nested links.
-            rendered.append('<link href=' + quoteattr(destination) + '>' +
+            rendered.append('<link underline="0" href=' + quoteattr(destination) + '>' +
                             escape(label.replace('**', '').replace('`', '')) + '</link>')
         elif bold is not None:
             rendered.append('<b>' + plain(bold) + '</b>')
@@ -220,10 +220,8 @@ def build(input_path=ROOT / '完整指南.md', output_path=OUT,
             if in_body:
                 if '：' in text and line.startswith('- '):
                     label, content = text.split('：', 1)
-                    rendered = '<b>' + markup(label + '：') + '</b><u>' + \
-                        markup(content, entries, sources, link_entries=related or in_sources) + '</u>'
-                else:
-                    rendered = '<u>' + rendered + '</u>'
+                    rendered = '<b>' + markup(label + '：') + '</b>' + \
+                        markup(content, entries, sources, link_entries=related or in_sources)
             story.append(Paragraph(rendered, style))
     GuideDoc(str(output_path), pagesize=A4, rightMargin=46, leftMargin=46,
              topMargin=45, bottomMargin=49, title='人情世故指南', author='HowToGetAlong',
