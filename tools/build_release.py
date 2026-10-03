@@ -11,11 +11,12 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 from build import ROOT, read_entries
+from sources import load_sources
 from build_docs import PAGES as DOC_SOURCES
 
 PAGES = ['index.html', '阅读全文.html', 'about.html', 'downloads/html.html', 'docs/usage.html',
          'docs/practice.html', 'docs/verification.html', 'docs/editorial-guide.html',
-         'docs/sources.html', 'docs/strategy-notes.html']
+         'docs/sources.html', 'docs/strategy-notes.html', 'docs/interview-notes.html']
 
 
 class Links(HTMLParser):
@@ -106,8 +107,8 @@ def validate():
     for entry in entries:
         if f'{entry["id"]} {entry["title"]}' not in outline_titles:
             raise ValueError(f'PDF 缺少条目书签：{entry["id"]}')
-    sources = json.loads((ROOT / 'docs/Morris账号整理/来源与条目.json').read_text(encoding='utf-8'))
-    referenced = set(re.findall(r'\bS\d{2}\b', full))
+    sources = load_sources()
+    referenced = set(re.findall(r'\b[SR]\d{2}\b', full))
     uris = set()
     for page in pdf.pages:
         for ref in page.get('/Annots', []):
@@ -115,7 +116,7 @@ def validate():
             action = annotation.get('/A', {})
             if action.get('/S') == '/URI':
                 uris.add(action.get('/URI'))
-    for item in sources['sources']:
+    for item in sources:
         if item['id'] in referenced and item['url'] not in uris:
             raise ValueError(f'PDF 缺少来源外链：{item["id"]}')
     print(f'校验通过：{len(entries)} 条正文、Skill 快照、{len(PAGES)} 个网页入口、'

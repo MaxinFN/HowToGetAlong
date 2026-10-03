@@ -22,7 +22,7 @@ REPO_URL = 'https://github.com/kkk-bot/HowToGetAlong/blob/main/'
 GREEN = colors.HexColor('#243d32')
 CHAPTER_RE = re.compile(r'^(\d+)\.\s+(.+)$')
 ENTRY_RE = re.compile(r'^(\d+(?:\.\d+)?)\.\s+(.+)$')
-SOURCE_RE = re.compile(r'^(S\d{2})\b[.：:、\s-]*(.*)$')
+SOURCE_RE = re.compile(r'^([SR]\d{2})\b[.：:、\s-]*(.*)$')
 INLINE_RE = re.compile(r'\[([^\]]+)\]\(([^)]+)\)|\*\*(.+?)\*\*|`([^`]+)`')
 
 
@@ -57,7 +57,7 @@ def discover_targets(lines):
 def markup(text, entries=(), sources=(), link_entries=False):
     """Keep Markdown links, emphasis, and verified internal references."""
     def plain(part):
-        pattern = r'(?<![\w.])(\d+\.\d+)(?![\w.])|\b(S\d{2})\b'
+        pattern = r'(?<![\w.])(\d+\.\d+)(?![\w.])|\b([SR]\d{2})\b'
         rendered, position = [], 0
         for match in re.finditer(pattern, part):
             rendered.append(escape(part[position:match.start()]))

@@ -5,6 +5,7 @@ import json
 import re
 import shutil
 import html
+from sources import load_sources
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = ['判断关键', '行动前准备', '何时换办法', '遇到的情况', '先做什么', '可以怎么说', '分情境处理', '花掉什么', '可能换回什么', '例外与代价', '依据', '相关条目']
@@ -65,7 +66,7 @@ PAGE = r'''<!doctype html>
 :root{--ink:#20382f;--muted:#64736b;--green:#225a43;--paper:#f7f5ee;--line:#dce1d7}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.8}a{color:var(--green);text-underline-offset:4px}button,input,select{font:inherit}button,select{cursor:pointer}header,main,footer{max-width:1120px;margin:auto;padding:0 28px}.top{display:flex;justify-content:space-between;gap:20px;padding:24px 0;border-bottom:1px solid var(--line);font-size:13px;letter-spacing:.06em}.brand{font-weight:700}.top{flex-wrap:wrap}.navlinks{display:flex;gap:8px 16px;flex-wrap:wrap;align-items:center}.top a{text-decoration:none}.hero{padding:60px 0 36px;max-width:900px}.eyebrow{font-size:12px;letter-spacing:.16em;color:var(--green);font-weight:700}h1{font-family:"Songti SC","Noto Serif CJK SC",serif;font-size:clamp(32px,5vw,54px);line-height:1.3;letter-spacing:-.025em;margin:16px 0 20px}h1 span{display:block}.lead{font-size:18px;max-width:680px;margin:0}.note{font-size:13px;color:var(--muted);max-width:750px;margin-top:22px}.toolbar{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:22px}.search{display:block;font-weight:600;font-size:13px;margin-bottom:8px}input{width:100%;padding:13px 15px;border:1px solid #b8c8bc;border-radius:8px;background:#fcfdfb;color:var(--ink)}input:focus,select:focus,button:focus-visible,summary:focus-visible{outline:3px solid #9fc6af;outline-offset:3px}.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px}.filters label{font-size:13px;color:var(--muted)}select{margin-left:7px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:white;color:var(--ink);max-width:100%}button{border:0;background:#eaf0e9;color:var(--green);border-radius:6px;padding:8px 12px;font-size:13px}.search-actions{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:18px}#search-submit{background:var(--green);color:white;min-width:84px;padding:9px 18px}.resultline{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:13px;margin:20px 0}#list{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.card{background:white;border:1px solid var(--line);border-radius:12px;padding:23px;scroll-margin-top:24px}.cardhead{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}.card h2{font-size:20px;line-height:1.55;margin:12px 0}.card .scene{color:var(--muted);font-size:14px;margin:0 0 16px}.judgment{font-size:14px;padding:0;background:transparent;margin:0 0 18px}.judgment strong{display:block;font-size:16px;color:var(--green);margin-bottom:3px}.action{font-size:14px;margin:0 0 14px}.action strong{color:var(--green);display:block;font-size:16px;margin-bottom:3px}.example-label{font-size:16px;color:var(--green);font-weight:650;margin:0 0 8px}blockquote{background:#f0f5ee;border:1px solid #d2dfce;border-radius:6px;margin:0 0 14px;padding:8px 12px;font-size:14px;width:fit-content;max-width:100%}.chips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.chip{font-size:11px;background:#f4f4ef;color:var(--muted);padding:2px 8px;border-radius:20px}summary{font-size:13px;color:var(--green);cursor:pointer;padding:8px 0}dl{font-size:13px;margin:10px 0}dt{font-size:16px;color:var(--green);font-weight:650;margin-top:20px}dd{margin:3px 0;color:#53645a;overflow-wrap:anywhere}.refs{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:12px}.refs a{display:inline-block;margin-right:12px}.source{font-size:12px;color:var(--muted);margin-top:10px}.empty{grid-column:1/-1;padding:48px;text-align:center;border:1px dashed #b9c9bb;border-radius:12px}.guide{margin-top:46px;padding:26px 0;border-top:1px solid var(--line);max-width:800px}.guide h2{font-size:19px}.guide p{font-size:14px;color:var(--muted)}footer{padding-top:22px;padding-bottom:35px;font-size:12px;color:var(--muted)}.card:target{outline:2px solid #588b68}noscript{display:block;padding:20px;background:#fff1db}@media(max-width:700px){header,main,footer{padding-left:18px;padding-right:18px}.hero{padding-top:36px}.lead{font-size:16px}#list{grid-template-columns:1fr}.card{padding:20px}.filters{align-items:stretch}.filters label{width:100%;display:flex;align-items:center;justify-content:space-between}.filters select{width:78%}.top{font-size:11px}.resultline{align-items:flex-start}}@media print{.toolbar,.top,#expand{display:none}#list{display:block}.card{break-inside:avoid;margin-bottom:18px}details{display:block}h1{font-size:30px}}
 </style></head><body>
 <header><div class="top"><span class="brand">__NAME__ · FIRST EDITION</span><a href="README.md">项目说明 ↗</a></div><div class="hero"><div class="eyebrow">校园 / 实习 / 日常交往</div><h1>__NAME__</h1><p class="lead">遇到难开口的事，先看清情况，<br>再决定怎么说、怎么做。</p><p class="note">__COUNT__ 个场景 · 每条都有判断、准备、做法、示例、代价与调整信号。<br>这是经验建议初稿，没有验证成功率；示例可以调整，对方也有拒绝的空间。</p></div></header>
-<main><section class="toolbar" aria-label="查找场景"><label class="search" for="query">你遇到了什么？</label><input id="query" type="search" placeholder="试试：改作业、借钱、没回复、不喝酒……" autocomplete="off"><div class="filters"><label for="chapter">章节<select id="chapter"><option value="">全部章节</option></select></label><label for="topic">主题<select id="topic"><option value="">全部主题</option></select></label><label for="person">对象<select id="person"><option value="">全部对象</option></select></label></div><div class="search-actions"><button id="search-submit" type="button">搜索</button><button id="reset" type="button">清除筛选</button></div></section><div class="resultline"><span id="count" role="status" aria-live="polite"></span><button id="expand" type="button">展开全部细节</button></div><noscript>阅读页需要启用 JavaScript。也可以直接打开 <a href="阅读全文.html">连续阅读版</a> 阅读全部正文。</noscript><section id="list" aria-label="建议条目"></section><section class="guide"><h2>怎么用这份指南</h2><p>想练习一次交流？<a href="阅读全文.html#practice">打开复盘卡与场景练习</a>。</p><p>先找相近场景，回答“判断关键”，再看“先做什么”与示例表达。展开细节后，检查行动前准备、不同情境、代价与“何时换办法”。一个办法可能让关系更清楚，也可能引起不满，没有保证双方都满意的万能话术。</p><p>本版所有条目均为经验建议。涉及学校、单位、合同和法律的实际要求，需核对适用规则。<a href="docs/editorial-guide.html">编写与纠错规范</a> · <a href="docs/sources.html">选题来源与限制</a> · <a href="docs/Morris账号整理/阅读笔记.html">Morris 来源笔记</a></p></section></main><footer>v0.1 · 2026-10-02 · 初版 __CHAPTERS__ 章 __COUNT__ 条 · 根据自己的情况选择，不用全部做到。</footer>
+<main><section class="toolbar" aria-label="查找场景"><label class="search" for="query">你遇到了什么？</label><input id="query" type="search" placeholder="试试：改作业、借钱、没回复、不喝酒……" autocomplete="off"><div class="filters"><label for="chapter">章节<select id="chapter"><option value="">全部章节</option></select></label><label for="topic">主题<select id="topic"><option value="">全部主题</option></select></label><label for="person">对象<select id="person"><option value="">全部对象</option></select></label></div><div class="search-actions"><button id="search-submit" type="button">搜索</button><button id="reset" type="button">清除筛选</button></div></section><div class="resultline"><span id="count" role="status" aria-live="polite"></span><button id="expand" type="button">展开全部细节</button></div><noscript>阅读页需要启用 JavaScript。也可以直接打开 <a href="阅读全文.html">连续阅读版</a> 阅读全部正文。</noscript><section id="list" aria-label="建议条目"></section><section class="guide"><h2>怎么用这份指南</h2><p>想练习一次交流？<a href="阅读全文.html#practice">打开复盘卡与场景练习</a>。</p><p>先找相近场景，回答“判断关键”，再看“先做什么”与示例表达。展开细节后，检查行动前准备、不同情境、代价与“何时换办法”。一个办法可能让关系更清楚，也可能引起不满，没有保证双方都满意的万能话术。</p><p>本版所有条目均为经验建议。涉及学校、单位、合同和法律的实际要求，需核对适用规则。<a href="docs/editorial-guide.html">编写与纠错规范</a> · <a href="docs/sources.html">选题来源与限制</a> · <a href="docs/Morris账号整理/阅读笔记.html">Morris 来源笔记</a> · <a href="docs/interview-notes.html">访谈与博客笔记</a></p></section></main><footer>v0.1 · 2026-10-02 · 初版 __CHAPTERS__ 章 __COUNT__ 条 · 根据自己的情况选择，不用全部做到。</footer>
 <script id="entries" type="application/json">__DATA__</script>
 <script>__SEARCH_SCRIPT__
 </script></body></html>'''
@@ -108,20 +109,25 @@ def main():
     (refs / '目录.md').write_text(toc, encoding='utf-8')
     (refs / 'Morris账号公开内容学习笔记.md').write_text((ROOT / 'docs/Morris账号整理/学习笔记.md').read_text(encoding='utf-8'), encoding='utf-8')
     (refs / 'v1.4整合记录.md').write_text((ROOT / 'docs/核实记录/v1.4说明.md').read_text(encoding='utf-8').replace('../Morris账号整理/学习笔记.md', 'Morris账号公开内容学习笔记.md'), encoding='utf-8')
+    shutil.copyfile(ROOT / 'docs/访谈与博客学习笔记.md', refs / '访谈与博客学习笔记.md')
+    (refs / '访谈与博客学习笔记.md').write_text((refs / '访谈与博客学习笔记.md').read_text(encoding='utf-8').replace('核实记录/v1.6说明.md', 'v1.6整合记录.md'), encoding='utf-8')
+    (refs / 'v1.6整合记录.md').write_text((ROOT / 'docs/核实记录/v1.6说明.md').read_text(encoding='utf-8').replace('../访谈与博客学习笔记.md', '访谈与博客学习笔记.md'), encoding='utf-8')
+    with (refs / '目录.md').open('a', encoding='utf-8') as stream:
+        stream.write('\n- [访谈与博客学习笔记](访谈与博客学习笔记.md)\n- [v1.6 整合记录](v1.6整合记录.md)\n')
     full = f'# {meta["name"]}\n\n{meta["positioning"]}\n\nv{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条\n\n'
     full += '先判断目标与条件，再做准备、选择行动，最后根据反馈调整。判断框架受《孙子兵法》的权衡、准备与因情境调整思路启发，生活建议仍是本项目的经验建议，未验证效果。\n\n'
     full += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
     full += '本版全部为经验建议。示例表达可以调整，效果取决于关系和环境；涉及具体制度请查适用规则。\n\n'
     full += '\n\n'.join((ROOT / 'book' / c['file']).read_text(encoding='utf-8') for c in chapters)
     full += '\n\n' + practice
-    sources = json.loads((ROOT / 'docs/Morris账号整理/来源与条目.json').read_text(encoding='utf-8'))
-    referenced = set(re.findall(r'\bS\d{2}\b', full))
-    selected_sources = [item for item in sources['sources'] if item['id'] in referenced]
+    sources = load_sources()
+    referenced = set(re.findall(r'\b[SR]\d{2}\b', full))
+    selected_sources = [item for item in sources if item['id'] in referenced]
     if referenced - {item['id'] for item in selected_sources}:
         raise ValueError('正文来源编号缺少索引')
-    source_index = '# 来源索引\n\n以下来源编号对应正文及练习中采用的作者观点。原帖核对状态沿用 2026-10-02 的整理记录；作者观点不证明方法有效，正文动作与示例由本项目编写。\n\n'
+    source_index = '# 来源索引\n\n以下来源编号对应正文及练习中采用的作者观点。S 编号沿用 2026-10-02 原帖记录，R 编号按 2026-10-03 访谈与博客记录标明实际取得材料；作者观点不证明方法有效，正文动作与示例由本项目编写。\n\n'
     for item in selected_sources:
-        source_index += f'## {item["id"]}. {item["title"]}\n\n原帖日期：{item["date"]} · {item["status"]}。\n\n[查看原帖]({item["url"]})\n\n'
+        source_index += f'## {item["id"]}. {item["title"]}\n\n来源日期：{item["date"]} · {item["status"]}。\n\n[查看来源]({item["url"]})\n\n'
     full += '\n\n' + source_index
     (refs / '来源索引.md').write_text(source_index, encoding='utf-8')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
@@ -132,7 +138,7 @@ def main():
     body += '<p><strong>免责声明：仅供参考。</strong> ' + html.escape(meta['disclaimer']) + '</p>'
     body += '<p>示例表达可以调整，效果取决于关系和环境。完整阅读情境、代价和例外后再决定；具体制度请查适用规则。</p>'
     body += '<p>先判断目标与条件，再做准备、选择行动，根据反馈调整。框架受《孙子兵法》启发，古文不是这些生活建议有效的证明。<a href="docs/strategy-notes.html">查看来源与转译边界</a>。</p>'
-    body += '<p><a href="docs/Morris账号整理/阅读笔记.html">Morris 来源笔记</a> · <a href="docs/verification.html">查看本次整合记录</a>；正文补充仍为经验建议。</p>'
+    body += '<p><a href="docs/Morris账号整理/阅读笔记.html">Morris 来源笔记</a> · <a href="docs/interview-notes.html">访谈与博客笔记</a> · <a href="docs/verification.html">查看本次整合记录</a>；正文补充仍为经验建议。</p>'
     body += '<nav><a href="index.html">返回检索页</a> · <a href="downloads/人情世故指南.pdf" download>下载 PDF</a> · <a href="完整指南.md" download>下载完整正文</a> · <a href="docs/practice.html">场景练习</a> · <button onclick="window.print()">打印 / 保存为 PDF</button></nav><h2>目录</h2><ol>'
     body += ''.join(f'<li><a href="#chapter-{c["number"]}">{html.escape(c["title"])}</a></li>' for c in chapters) + '</ol><p><a href="#practice">附录：交流复盘与场景练习</a> · <a href="#sources">来源索引</a></p>'
     for chapter in chapters:
@@ -144,7 +150,7 @@ def main():
                 if key == '相关条目':
                     escaped = re.sub(r'(\d+\.\d+)（([^）]+)）', r'<a href="#entry-\1">\1（\2）</a>', escaped)
                 elif key == '依据':
-                    escaped = re.sub(r'\b(S\d{2})\b', r'<a href="#source-\1">\1</a>', escaped)
+                    escaped = re.sub(r'\b([SR]\d{2})\b', r'<a href="#source-\1">\1</a>', escaped)
                 body += '<dt>' + html.escape(key) + '</dt><dd' + (' class="example"' if key == '可以怎么说' else '') + '>' + escaped + '</dd>'
             body += '</dl></article>'
     body += '<section id="practice" class="chapter">'
@@ -160,9 +166,9 @@ def main():
             body += '<h4>表达示例</h4><p class="example">' + html.escape(block.removeprefix('原创示例：')) + '</p>'
         else:
             body += '<p>' + html.escape(block).replace('\n', '<br>') + '</p>'
-    body += '</section><section id="sources" class="chapter"><h2>来源索引</h2><p>来源编号对应正文及练习中的作者观点，核对状态沿用 2026-10-02 的整理记录；它们不证明方法有效。</p>'
+    body += '</section><section id="sources" class="chapter"><h2>来源索引</h2><p>来源编号对应正文及练习中的作者观点；S 编号来自原帖，R 编号来自节目简介、访谈文字或博客，各项标明取得方式。它们不证明方法有效。</p>'
     for item in selected_sources:
-        body += '<h3 id="source-' + item['id'] + '">' + html.escape(item['id'] + ' ' + item['title']) + '</h3><p>' + html.escape(item['date'] + ' · ' + item['status']) + ' · <a href="' + html.escape(item['url'], quote=True) + '">查看原帖</a></p>'
+        body += '<h3 id="source-' + item['id'] + '">' + html.escape(item['id'] + ' ' + item['title']) + '</h3><p>' + html.escape(item['date'] + ' · ' + item['status']) + ' · <a href="' + html.escape(item['url'], quote=True) + '">查看来源</a></p>'
     body += '</section>'
     css = 'body{max-width:850px;margin:40px auto;padding:0 22px;background:#faf9f4;color:#23392f;font:16px/1.85 -apple-system,"PingFang SC",sans-serif}h1{font-size:34px;line-height:1.4}h2{margin-top:48px}h3{font-size:22px;line-height:1.5}a{color:#225a43}nav,button{font:inherit}button{cursor:pointer}article{border-top:1px solid #dce1d7;padding-top:20px;margin:30px 0;scroll-margin-top:20px}dt{font-size:16px;color:#355d43;font-weight:650;margin-top:22px}dd{margin:8px 0 0;overflow-wrap:anywhere}.example{background:#f0f5ee;border:1px solid #d2dfce;border-radius:6px;padding:8px 12px;width:fit-content;max-width:100%}h4{font-size:16px;color:#355d43;margin:20px 0 8px}#practice p,#practice ul{margin:12px 0}#practice .example{margin-top:8px}@media(max-width:600px){body{margin:24px auto;padding:0 16px}h1{font-size:28px}h3{font-size:21px}.example{padding:8px 10px}}.muted{color:#64736b}@media print{body{background:white;margin:0;font-size:11pt}nav{display:none}.chapter{break-before:page}h3,dt{break-after:avoid}dd{orphans:3;widows:3}a{color:inherit;text-decoration:none}}'
     (ROOT / '阅读全文.html').write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + html.escape(meta['name']) + ' · 完整阅读</title><style>' + css + '</style><body>' + body + '</body></html>', encoding='utf-8')
@@ -170,7 +176,7 @@ def main():
     for source, destination in {
         '交流复盘与场景练习.md': 'practice.md',
         '编写规范.md': 'editorial-guide.md',
-        '核实记录/v1.4说明.md': 'verification.md',
+        '核实记录/v1.6说明.md': 'verification.md',
     }.items():
         text = (ROOT / 'docs' / source).read_text(encoding='utf-8')
         if '/' in source:

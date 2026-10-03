@@ -21,7 +21,7 @@
 | 下载 | [PDF](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/downloads/%E4%BA%BA%E6%83%85%E4%B8%96%E6%95%85%E6%8C%87%E5%8D%97.pdf) · [HTML 检索页](https://kkk-bot.github.io/HowToGetAlong/downloads/html.html) · [Markdown](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md) · [项目 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip) |
 | 阅读 | [完整文字版](完整指南.md) · [使用指南](https://kkk-bot.github.io/HowToGetAlong/docs/usage.html) |
 | 练习 | [交流复盘与场景练习](https://kkk-bot.github.io/HowToGetAlong/docs/practice.html) |
-| 查阅 | [依据与核实记录](https://kkk-bot.github.io/HowToGetAlong/docs/verification.html) · [编写与纠错规范](https://kkk-bot.github.io/HowToGetAlong/docs/editorial-guide.html) · [来源索引](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html#sources) |
+| 查阅 | [依据与核实记录](https://kkk-bot.github.io/HowToGetAlong/docs/verification.html) · [编写与纠错规范](https://kkk-bot.github.io/HowToGetAlong/docs/editorial-guide.html) · [访谈与博客笔记](https://kkk-bot.github.io/HowToGetAlong/docs/interview-notes.html) · [来源索引](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html#sources) |
 
 点击上方“阅读与检索”或“连续阅读”可直接在线阅读。需要离线使用时，下载项目 ZIP，解压后用浏览器打开 `index.html` 或 `阅读全文.html`。
 
@@ -90,6 +90,7 @@ PDF 默认使用 macOS 的中文字体。其他系统可给统一命令加上 `-
 - [编写与纠错规范](docs/editorial-guide.md)
 - [第一版核实记录](docs/核实记录/初版说明.md)
 - [v1.0 扩充与审查记录](docs/核实记录/v1.0说明.md)
+- [访谈与博客学习笔记](docs/访谈与博客学习笔记.md)：来源取得方式、原创转译与未完成核对。
 - [平台调研与来源限制](docs/平台调研.md)
 - [三条抖音视频的借鉴笔记与原创练习](docs/抖音三条视频借鉴笔记.md)
 - [Morris 账号公开内容学习笔记](docs/Morris账号整理/阅读笔记.html)：24 条主题笔记，标注原帖核对状态、原创动作与限制；不代表历史全量覆盖。

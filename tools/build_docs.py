@@ -23,10 +23,12 @@ PAGES = {
     'docs/使用指南.md': 'docs/usage.html',
     'docs/平台调研.md': 'docs/sources.html',
     'docs/孙子兵法学习笔记.md': 'docs/strategy-notes.html',
+    'docs/访谈与博客学习笔记.md': 'docs/interview-notes.html',
 }
 ALIASES = {
     'docs/交流复盘与场景练习.md': 'docs/practice.html',
     'docs/核实记录/v1.4说明.md': 'docs/verification.html',
+    'docs/核实记录/v1.6说明.md': 'docs/verification.html',
     'docs/编写规范.md': 'docs/editorial-guide.html',
     'docs/Morris账号整理/学习笔记.md': 'docs/Morris账号整理/阅读笔记.html',
     '完整指南.md': '阅读全文.html',
