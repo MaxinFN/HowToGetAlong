@@ -87,6 +87,8 @@ python3 tools/build_release.py
 
 PDF 默认使用 macOS 的中文字体。其他系统可给统一命令加上 `--font /path/to/chinese.ttf --bold-font /path/to/chinese-bold.ttf`，指定常规及粗体中文 TrueType 字体。只检查已生成文件时运行 `python3 tools/build_release.py --check`。搜索实现放在 `tools/search.js`，正文与标签仍以 `book/` 为准。
 
+修改检索逻辑后，生成页面并运行 `node tools/test_search.cjs`，检查自然语言搜索、筛选与条目跳转的刷新状态；此检查需要 Node.js。
+
 - [编写与纠错规范](docs/editorial-guide.md)
 - [第一版核实记录](docs/核实记录/初版说明.md)
 - [v1.0 扩充与审查记录](docs/核实记录/v1.0说明.md)

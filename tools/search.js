@@ -92,7 +92,7 @@ function questionCore(query) {
   return normalize(query).trim()
     .replace(/^(?:请问|请教一下|我想知道|我想问|帮我看看|帮我|我应该|我该|应该|到底|该|可以|要|想|我)(?:\s*)/u, '')
     .replace(/^(?:怎么才能|怎么|如何|怎样|怎么样)(?:\s*)/u, '')
-    .replace(/(?:该怎么办|怎么办|怎么处理|怎么说|怎么做|如何处理|好不好|可以吗|合适吗|[呢吗啊呀吧])(?:\s*)$/u, '')
+    .replace(/(?:该怎么办|怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|好不好|可以吗|合适吗|[呢吗啊呀吧])(?:\s*)$/u, '')
     .trim();
 }
 
@@ -116,7 +116,7 @@ function queryGroups(query) {
     for (const remainder of rest.split(/\s+/u).filter(Boolean)) {
       const significant = remainder
         .replace(/^(?:请问|怎么才能|怎么样|怎么|如何|怎样|应该|该|我想|我|你|对方|别人|有人|给|向|跟|和|与|的|要|想|不想)+/u, '')
-        .replace(/(?:怎么办|怎么处理|怎么说|怎么做|如何处理|的时候|的时候该|时|的|了|呢|吗|啊|呀|吧|该)+$/u, '');
+        .replace(/(?:怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|的时候|的时候该|时|的|了|呢|吗|啊|呀|吧|该)+$/u, '');
       if (significant) groups.push([significant]);
     }
   }
@@ -153,8 +153,11 @@ function filtered() {
   }).filter(item => item.matched).sort((a, b) => b.score - a.score || a.position - b.position).map(item => item.entry);
 }
 
-function saveFilters() {
+function saveFilters(clearAnchor = false) {
   const url = new URL(location.href);
+  // A new search must not retain an old card jump: on reload that jump would
+  // clear the new filters to reveal the old card.
+  if (clearAnchor && url.hash.startsWith('#entry-')) url.hash = '';
   for (const [id, parameter] of [['query', 'q'], ['chapter', 'chapter'], ['topic', 'topic'], ['person', 'person']]) {
     const value = $(id).value.trim();
     if (value) url.searchParams.set(parameter, value);
@@ -176,7 +179,7 @@ function restoreFilters() {
   }
 }
 
-function render(save = true) {
+function render(save = true, clearAnchor = false) {
   const shown = filtered();
   $('count').textContent = `找到 ${shown.length} 条 / 共 ${entries.length} 条 · 依据：经验建议`;
   $('list').innerHTML = shown.length ? shown.map(entry => {
@@ -186,28 +189,29 @@ function render(save = true) {
     return `<article class="card" id="entry-${entry.id}"><div class="cardhead"><span>第 ${entry.chapter} 章 · 第 ${entry.id.split('.')[1]} 条</span><span>经验建议</span></div><h2>${escape(entry.title)}</h2><p class="scene">${escape(fields['遇到的情况'])}</p><p class="judgment"><strong>判断关键</strong>${escape(fields['判断关键'])}</p><p class="action"><strong>先做什么</strong>${escape(fields['先做什么'])}</p><p class="example-label">可以怎么说</p><blockquote>${escape(fields['可以怎么说']).replaceAll('（示例仅供参考，请根据事实情况调整。）', '（示例仅供参考，请根据事实情况调整。）<br><br>').replace(/(<br><br>)$/, '')}</blockquote><div class="chips">${entry.tags['主题'].map(tag => `<span class="chip">${escape(tag)}</span>`).join('')}</div><details ${allExpanded ? 'open' : ''}><summary>查看准备、不同情境与调整信号</summary><dl>${remaining.map(([key, value]) => `<dt>${escape(key)}</dt><dd>${escape(value)}</dd>`).join('')}</dl><div class="refs">相关条目：${targets}</div><div class="source"><a href="阅读全文.html#chapter-${entry.chapter}">阅读本章正文 ↗</a></div></details></article>`;
   }).join('') : '<div class="empty">没有找到相近条目。可以试试更具体的关键词，或清除筛选。</div>';
   $('expand').textContent = allExpanded ? '收起全部细节' : '展开全部细节';
-  if (save) saveFilters();
+  if (save) saveFilters(clearAnchor);
 }
 
-function reset() {
+function applyFilters() { render(true, true); }
+function reset(clearAnchor = true) {
   for (const id of filterIds) $(id).value = '';
-  render();
+  render(true, clearAnchor);
 }
 $('query').maxLength = 200;
-$('query').addEventListener('input', event => { if (!event.isComposing) render(); });
-$('query').addEventListener('compositionend', () => render());
-for (const id of ['chapter', 'topic', 'person']) $(id).addEventListener('change', () => render());
-$('search-submit').addEventListener('click', () => render());
+$('query').addEventListener('input', event => { if (!event.isComposing) applyFilters(); });
+$('query').addEventListener('compositionend', applyFilters);
+for (const id of ['chapter', 'topic', 'person']) $(id).addEventListener('change', applyFilters);
+$('search-submit').addEventListener('click', applyFilters);
 $('query').addEventListener('keydown', event => {
-  if (event.key === 'Enter' && !event.isComposing) { event.preventDefault(); render(); }
+  if (event.key === 'Enter' && !event.isComposing) { event.preventDefault(); applyFilters(); }
 });
-$('reset').addEventListener('click', reset);
+$('reset').addEventListener('click', () => reset());
 $('expand').addEventListener('click', () => { allExpanded = !allExpanded; render(); });
 
 function jump(id) {
   if (!entries.some(entry => entry.id === id)) return;
   let card = $('entry-' + id);
-  if (!card) { reset(); card = $('entry-' + id); }
+  if (!card) { reset(false); card = $('entry-' + id); }
   card.querySelector('details').open = true;
   card.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
