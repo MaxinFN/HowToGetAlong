@@ -171,8 +171,8 @@ def build(input_path=ROOT / '完整指南.md', output_path=OUT,
     entries, sources = discover_targets(lines)
     body, chapter, heading, example = styles()
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    story = [Spacer(1, 34), Image(str(ROOT / 'docs/assets/cover-v1.13.png'),
-             width=A4[0] - 92, height=(A4[0] - 92) * 9 / 16), Spacer(1, 30)]
+    story = [Spacer(1, 34), Image(str(ROOT / 'docs/assets/cover-growth.png'),
+             width=A4[0] - 92, height=(A4[0] - 92) * 2 / 3), Spacer(1, 30)]
     first_title, in_body, in_sources = True, False, False
     chapter_number, chapter_index = None, 0
     for line in lines:

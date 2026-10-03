@@ -1,6 +1,6 @@
 # 人情世故指南
 
-![人情世故指南封面](docs/assets/cover-v1.13.png)
+![人情世故指南封面](docs/assets/cover-growth.png)
 
 ## 项目简介
 
