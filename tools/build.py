@@ -132,6 +132,9 @@ def main():
     shutil.copyfile(ROOT / 'docs/核实记录/v1.12说明.md', refs / 'v1.12整合记录.md')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [v1.12 平和回应整合记录](v1.12整合记录.md)\n')
+    shutil.copyfile(ROOT / 'docs/核实记录/v1.13说明.md', refs / 'v1.13整合记录.md')
+    with (refs / '目录.md').open('a', encoding='utf-8') as stream:
+        stream.write('\n- [v1.13 回应夸奖新增记录](v1.13整合记录.md)\n')
     full = f'# {meta["name"]}\n\n{meta["positioning"]}\n\nv{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条\n\n'
     full += '先判断目标与条件，再做准备、选择行动，最后根据反馈调整。判断框架受《孙子兵法》的权衡、准备与因情境调整思路启发，生活建议仍是本项目的经验建议，未验证效果。\n\n'
     full += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
@@ -196,7 +199,7 @@ def main():
     for source, destination in {
         '交流复盘与场景练习.md': 'practice.md',
         '编写规范.md': 'editorial-guide.md',
-        '核实记录/v1.12说明.md': 'verification.md',
+        '核实记录/v1.13说明.md': 'verification.md',
     }.items():
         text = (ROOT / 'docs' / source).read_text(encoding='utf-8')
         if '/' in source:
