@@ -16,7 +16,8 @@ from build_docs import PAGES as DOC_SOURCES
 
 PAGES = ['index.html', '阅读全文.html', 'about.html', 'downloads/html.html', 'docs/usage.html',
          'docs/practice.html', 'docs/verification.html', 'docs/editorial-guide.html',
-         'docs/sources.html', 'docs/strategy-notes.html', 'docs/interview-notes.html']
+         'docs/sources.html', 'docs/strategy-notes.html', 'docs/interview-notes.html',
+         'docs/research-notes.html']
 
 
 class Links(HTMLParser):

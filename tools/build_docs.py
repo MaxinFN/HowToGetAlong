@@ -24,6 +24,7 @@ PAGES = {
     'docs/平台调研.md': 'docs/sources.html',
     'docs/孙子兵法学习笔记.md': 'docs/strategy-notes.html',
     'docs/访谈与博客学习笔记.md': 'docs/interview-notes.html',
+    'docs/研究资料整理.md': 'docs/research-notes.html',
 }
 ALIASES = {
     'docs/交流复盘与场景练习.md': 'docs/practice.html',
