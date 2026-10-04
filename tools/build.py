@@ -149,7 +149,7 @@ def main():
     (refs / 'v1.15整合记录.md').write_text((ROOT / 'docs/核实记录/v1.15说明.md').read_text(encoding='utf-8').replace('../研究资料整理.md', '研究资料整理.md'), encoding='utf-8')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [论文与文章资料笔记](研究资料整理.md)\n- [v1.15 论文与文章整合记录](v1.15整合记录.md)\n')
-    shutil.copyfile(ROOT / 'docs/平台素材收集-2026-10-04.md', refs / '平台素材收集-2026-10-04.md')
+    (refs / '平台素材收集-2026-10-04.md').write_text((ROOT / 'docs/平台素材收集-2026-10-04.md').read_text(encoding='utf-8').replace('核实记录/v1.16说明.md', 'v1.16整合记录.md'), encoding='utf-8')
     (refs / '章节扩充资料-2026-10-04.md').write_text((ROOT / 'docs/章节扩充资料-2026-10-04.md').read_text(encoding='utf-8').replace('核实记录/v1.17说明.md', 'v1.17整合记录.md'), encoding='utf-8')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [短视频与网络文章候选素材](平台素材收集-2026-10-04.md)\n')
@@ -159,6 +159,12 @@ def main():
     (refs / 'v1.17整合记录.md').write_text((ROOT / 'docs/核实记录/v1.17说明.md').read_text(encoding='utf-8').replace('../章节扩充资料-2026-10-04.md', '章节扩充资料-2026-10-04.md').replace('../../阅读全文.html', 'https://kkk-bot.github.io/HowToGetAlong/阅读全文.html'), encoding='utf-8')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [章节扩充资料](章节扩充资料-2026-10-04.md)\n- [v1.17 章节扩充整合记录](v1.17整合记录.md)\n')
+    if meta['version'] != '1.17':
+        current_record = ROOT / f'docs/核实记录/v{meta["version"]}说明.md'
+        current_snapshot = f'v{meta["version"]}整合记录.md'
+        shutil.copyfile(current_record, refs / current_snapshot)
+        with (refs / '目录.md').open('a', encoding='utf-8') as stream:
+            stream.write(f'\n- [v{meta["version"]} 检查与修复记录]({current_snapshot})\n')
     full = f'# {meta["name"]}\n\n{meta["positioning"]}\n\nv{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条\n\n'
     full += '先判断目标与条件，再做准备、选择行动，最后根据反馈调整。判断框架受《孙子兵法》的权衡、准备与因情境调整思路启发，生活建议仍是本项目的经验建议，未验证效果。\n\n'
     full += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
@@ -223,7 +229,7 @@ def main():
     for source, destination in {
         '交流复盘与场景练习.md': 'practice.md',
         '编写规范.md': 'editorial-guide.md',
-        '核实记录/v1.17说明.md': 'verification.md',
+        f'核实记录/v{meta["version"]}说明.md': 'verification.md',
     }.items():
         text = (ROOT / 'docs' / source).read_text(encoding='utf-8')
         if '/' in source:

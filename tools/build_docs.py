@@ -28,22 +28,11 @@ PAGES = {
     'docs/平台素材收集-2026-10-04.md': 'docs/platform-notes.html',
     'docs/章节扩充资料-2026-10-04.md': 'docs/chapter-materials.html',
 }
+# Each historical record keeps its own content and URL, including in the ZIP.
+PAGES.update({file.relative_to(ROOT).as_posix(): f'docs/history/{file.stem}.html'
+              for file in sorted((ROOT / 'docs/核实记录').glob('*.md'))})
 ALIASES = {
     'docs/交流复盘与场景练习.md': 'docs/practice.html',
-    'docs/核实记录/v1.4说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.6说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.7说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.8说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.9说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.10说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.11说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.12说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.13说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.14说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.14.1说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.15说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.16说明.md': 'docs/verification.html',
-    'docs/核实记录/v1.17说明.md': 'docs/verification.html',
     'docs/编写规范.md': 'docs/editorial-guide.html',
     'docs/Morris账号整理/学习笔记.md': 'docs/Morris账号整理/阅读笔记.html',
     '完整指南.md': '阅读全文.html',

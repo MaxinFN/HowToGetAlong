@@ -78,6 +78,33 @@ function page(url) {
 
 const site = 'https://example.test/guide/index.html';
 const search = page(site);
+for (const entry of JSON.parse(data)) {
+  search.query(entry.id);
+  assert.deepEqual(search.ids(), ['entry-' + entry.id], 'Find the exact entry by number: ' + entry.id);
+  search.query(entry.title);
+  assert(search.ids().includes('entry-' + entry.id), 'Find an entry by its full title: ' + entry.id);
+}
+for (const query of ['条目 5.7', '第5.7条', '５．７', '#entry-5.7']) {
+  search.query(query);
+  assert.deepEqual(search.ids(), ['entry-5.7'], query);
+}
+search.query('99.1');
+assert.equal(search.cards.size, 0, 'Unknown entry numbers must not search unrelated body text');
+search.element('chapter').value = '4';
+search.query('5.7');
+assert.equal(search.cards.size, 0, 'Entry-number search must respect selected filters');
+search.element('chapter').value = '';
+for (const [query, target] of [
+  ['offer 催我答复', 'entry-10.7'], ['申请延长 offer 回复期限', 'entry-10.7'],
+  ['被别人夸奖时，要如何回复', 'entry-7.10'], ['领导夸我工作做得好怎么回复', 'entry-7.10'],
+  ['转发截图', 'entry-5.7'], ['老板临时让我加班', 'entry-3.1'],
+  ['室友拿我的东西', 'entry-1.4']
+]) {
+  search.query(query);
+  assert.equal(search.ids()[0], target, query);
+}
+search.query('怎么样送礼');
+assert(search.ids().includes('entry-4.4'), 'Longer question prefixes must not leave a stray character');
 for (const query of ['被夸奖怎么回复', '别人夸我如何回应', '老师夸我怎么回复']) {
   search.query(query);
   assert.equal(search.ids()[0], 'entry-7.10', query);
@@ -93,6 +120,8 @@ for (const [query, target] of [
 }
 search.query('送礼火星矿石');
 assert.equal(search.cards.size, 0, 'Unknown content must not become a broad gift search');
+search.query('offer 催我答复 火星矿石');
+assert.equal(search.cards.size, 0, 'Space-tolerant matching must preserve unknown words');
 search.query('怎么送礼');
 assert(search.ids().includes('entry-4.4'));
 search.element('chapter').value = '7';

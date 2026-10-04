@@ -18,6 +18,7 @@ PAGES = ['index.html', '阅读全文.html', 'about.html', 'downloads/html.html',
          'docs/practice.html', 'docs/verification.html', 'docs/editorial-guide.html',
          'docs/sources.html', 'docs/strategy-notes.html', 'docs/interview-notes.html',
          'docs/research-notes.html', 'docs/platform-notes.html', 'docs/chapter-materials.html']
+PAGES = list(dict.fromkeys([*PAGES, *DOC_SOURCES.values()]))
 
 
 class Links(HTMLParser):
@@ -40,6 +41,11 @@ def validate():
     from pypdf import PdfReader
     entries, chapters = read_entries()
     snapshots = ROOT / 'skills/social-situations-guide/references'
+    meta = json.loads((ROOT / 'project.json').read_text(encoding='utf-8'))
+    if meta['version'] != '1.17':
+        current_record = ROOT / f'docs/核实记录/v{meta["version"]}说明.md'
+        if current_record.read_bytes() != (snapshots / f'v{meta["version"]}整合记录.md').read_bytes():
+            raise ValueError('Skill 当前核实记录快照过期')
     for chapter in chapters:
         source = ROOT / 'book' / chapter['file']
         if source.read_bytes() != (snapshots / 'book' / chapter['file']).read_bytes():
@@ -54,6 +60,8 @@ def validate():
         expected = (ROOT / original).read_text(encoding='utf-8')
         if snapshot == '章节扩充资料-2026-10-04.md':
             expected = expected.replace('核实记录/v1.17说明.md', 'v1.17整合记录.md')
+        elif snapshot == '平台素材收集-2026-10-04.md':
+            expected = expected.replace('核实记录/v1.16说明.md', 'v1.16整合记录.md')
         elif snapshot == 'v1.17整合记录.md':
             expected = expected.replace('../章节扩充资料-2026-10-04.md', '章节扩充资料-2026-10-04.md').replace('../../阅读全文.html', 'https://kkk-bot.github.io/HowToGetAlong/阅读全文.html')
         elif snapshot == '研究资料整理.md':
@@ -64,6 +72,14 @@ def validate():
             expected = expected.replace('../平台素材收集-2026-10-04.md', '平台素材收集-2026-10-04.md')
         if expected != (snapshots / snapshot).read_text(encoding='utf-8'):
             raise ValueError(f'Skill 文档快照过期：{snapshot}')
+    for file in [ROOT / 'README.md', *(ROOT / 'skills/social-situations-guide').rglob('*.md')]:
+        for link in re.findall(r'\]\(([^\s)]+)\)', file.read_text(encoding='utf-8')):
+            url = urlsplit(link)
+            if url.scheme or url.netloc or not url.path:
+                continue
+            target = (file.parent / unquote(url.path)).resolve()
+            if not target.is_relative_to(ROOT) or not target.exists():
+                raise ValueError(f'Markdown 链接缺失：{file.relative_to(ROOT)} → {link}')
     source = ROOT / '完整指南.md'
     full = source.read_text(encoding='utf-8')
     for chapter in chapters:

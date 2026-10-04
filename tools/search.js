@@ -25,9 +25,9 @@ for (const [id, key] of [['topic', '主题'], ['person', '对象']]) {
 // A small, inspectable phrase dictionary, rather than splitting every Chinese
 // character. Specific phrases such as “借钱不还” are consumed before “借钱”.
 const concepts = [
-  { aliases: ['别人把照片发朋友圈', '发合照', '合照', '朋友圈照片', '发布照片', '聊天截图', '转发聊天记录', '公开聊天记录', '线上隐私'], matches: ['发布合照', '合照', '聊天截图', '线上隐私'] },
+  { aliases: ['别人把照片发朋友圈', '发合照', '合照', '朋友圈照片', '发布照片', '聊天截图', '转发截图', '转发聊天记录', '公开聊天记录', '线上隐私'], matches: ['发布合照', '合照', '聊天截图', '线上隐私'] },
   { aliases: ['看到别人被冒犯', '旁观者', '朋友被羞辱', '群里有人被欺负', '网络围攻', '群聊骚扰'], matches: ['旁观者', '看到别人被冒犯', '骚扰'] },
-  { aliases: ['offer催我答复', '延长offer回复期限', 'offer回复期限', '谈薪', '谈工资', '协商offer', 'offer协商', '申请延长回复期限', '回复期限'], matches: ['协商 offer', '回复期限'] },
+  { aliases: ['offer催我答复', '申请延长offer回复期限', '延长offer回复期限', 'offer回复期限', '谈薪', '谈工资', '协商offer', 'offer协商', '申请延长回复期限', '回复期限'], matches: ['协商 offer', '回复期限'] },
   { aliases: ['敬酒词', '敬酒话术', '敬酒', '祝酒词', '祝酒', '举杯'], matches: ['敬酒', '敬酒词', '祝福'] },
   { aliases: ['借钱不还', '借钱没还', '欠钱不还', '借了不还', '不还钱', '没还钱', '还钱', '还款', '催还', '催款', '催债', '讨债'], matches: ['没还钱', '还款', '催还', '还钱'] },
   { aliases: ['借钱', '借款'], matches: ['借钱', '借款'] },
@@ -37,7 +37,7 @@ const concepts = [
   { aliases: ['不想喝酒', '不喝酒', '拒酒', '劝酒'], matches: ['不喝酒', '拒酒'] },
   { aliases: ['请客吃饭', '聚餐', '饭局', '组局', '酒局'], matches: ['聚餐', '饭局'] },
   { aliases: ['聊天冷场', '接话', '聊天', '闲聊', '冷场'], matches: ['聊天', '话题'] },
-  { aliases: ['被夸', '被夸奖', '被夸赞', '接夸', '怎么回复夸奖', '夸我', '别人夸我'], matches: ['被夸赞', '接夸'] },
+  { aliases: ['被夸', '被夸奖', '被夸赞', '被别人夸奖', '被别人夸赞', '被表扬', '接夸', '怎么回复夸奖', '夸我工作做得好', '夸我做得好', '夸我表现好', '夸我', '别人夸我'], matches: ['被夸赞', '接夸'] },
   { aliases: ['赞美', '夸赞', '夸人', '夸奖', '表扬'], matches: ['夸赞', '赞美'] },
   { aliases: ['求人帮忙', '求助', '求人'], matches: ['求助'] },
   { aliases: ['帮忙', '帮助'], matches: ['帮忙', '帮助'] },
@@ -55,7 +55,8 @@ const concepts = [
   { aliases: ['误会', '修复关系'], matches: ['误会', '修复'] },
   { aliases: ['开玩笑', '玩笑', '冒犯'], matches: ['玩笑', '冒犯'] },
   { aliases: ['被批评', '批评', '挨骂'], matches: ['批评'] },
-  { aliases: ['借东西', '借物', '借用物品'], matches: ['借物', '物品', '使用你的东西'] },
+  { aliases: ['借东西', '借物', '借用物品', '拿我的东西', '用我的东西', '擅自用我的东西'], matches: ['借物', '物品', '使用你的东西'] },
+  { aliases: ['临时让我加班', '突然让我加班', '临时加班'], matches: ['临时任务', '临时加任务'] },
   { aliases: ['aa制', 'aa', '垫钱', '垫款', '代付'], matches: ['aa', '垫款', '垫钱'] },
   { aliases: ['分工', '小组作业', '团队合作'], matches: ['分工', '合作'] },
   { aliases: ['返工', '重做', '要求不清', '模糊要求'], matches: ['返工', '模糊要求'] },
@@ -78,9 +79,12 @@ const coveredAliases = new Set(concepts.flatMap(concept => concept.aliases.map(n
 for (const tag of new Set(entries.flatMap(entry => Object.values(entry.tags).flat()))) {
   if (!coveredAliases.has(normalize(tag))) concepts.push({ aliases: [tag], matches: [tag] });
 }
-const phraseIndex = concepts.flatMap((concept, index) => concept.aliases.map(alias => ({
-  phrase: normalize(alias), index
-}))).sort((a, b) => b.phrase.length - a.phrase.length);
+const phraseIndex = concepts.flatMap((concept, index) => concept.aliases.map(alias => {
+  const phrase = normalize(alias).replace(/\s+/gu, '');
+  // Match a known phrase across spaces, without discarding unknown words.
+  const pattern = new RegExp([...phrase].map(char => char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s*'), 'gu');
+  return { phrase, pattern, index };
+})).sort((a, b) => b.phrase.length - a.phrase.length);
 
 const searchIndex = entries.map((entry, position) => ({
   entry, position,
@@ -94,7 +98,7 @@ const searchIndex = entries.map((entry, position) => ({
 function questionCore(query) {
   return normalize(query).trim()
     .replace(/^(?:请问|请教一下|我想知道|我想问|帮我看看|帮我|我应该|我该|应该|到底|该|可以|要|想|我)(?:\s*)/u, '')
-    .replace(/^(?:怎么才能|怎么|如何|怎样|怎么样)(?:\s*)/u, '')
+    .replace(/^(?:怎么才能|怎么样|怎么|如何|怎样)(?:\s*)/u, '')
     .replace(/(?:该怎么办|怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|好不好|可以吗|合适吗|[呢吗啊呀吧])(?:\s*)$/u, '')
     .trim();
 }
@@ -104,26 +108,30 @@ function queryGroups(query) {
   if (!core) return [];
   const groups = [];
   const conceptIds = new Set();
-  for (const token of core.split(/[\s，。！？、；：,.;!?]+/u).filter(Boolean)) {
-    let rest = token;
-    for (const { phrase, index } of phraseIndex) {
-      if (!rest.includes(phrase)) continue;
-      if (!conceptIds.has(index)) {
-        conceptIds.add(index);
-        groups.push(concepts[index].matches.map(normalize));
-      }
-      rest = rest.split(phrase).join(' ');
+  let rest = core;
+  for (const { pattern, index } of phraseIndex) {
+    pattern.lastIndex = 0;
+    if (!pattern.test(rest)) continue;
+    if (!conceptIds.has(index)) {
+      conceptIds.add(index);
+      groups.push(concepts[index].matches.map(normalize));
     }
-    // Remove only complete grammatical remnants. Unknown phrases stay required,
-    // so “送礼火星矿石” does not silently become “送礼”.
-    for (const remainder of rest.split(/\s+/u).filter(Boolean)) {
-      const significant = remainder
-        .replace(/^(?:请问|怎么才能|怎么样|怎么|如何|怎样|应该|该|我想|我|你|对方|别人|有人|给|向|跟|和|与|的|要|想|不想)+/u, '')
-        .replace(/(?:怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|的时候|的时候该|时|的|了|呢|吗|啊|呀|吧|该)+$/u, '');
-      if (significant) groups.push([significant]);
-    }
+    rest = rest.replace(pattern, ' ');
+  }
+  // Remove only complete grammatical remnants. Unknown phrases stay required,
+  // so “送礼火星矿石” does not silently become “送礼”.
+  for (const remainder of rest.split(/[\s，。！？、；：,.;!?]+/u).filter(Boolean)) {
+    const significant = remainder
+      .replace(/^(?:请问|怎么才能|怎么样|怎么|如何|怎样|应该|该|我想|我|你|对方|别人|有人|给|向|跟|和|与|的|要|想|不想)+/u, '')
+      .replace(/(?:怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|的时候|的时候该|时|的|了|呢|吗|啊|呀|吧|该)+$/u, '');
+    if (significant) groups.push([significant]);
   }
   return groups;
+}
+
+function entryNumber(query) {
+  const match = normalize(query).trim().match(/^(?:#?entry[-\s]*|条目\s*|第\s*)?(\d+\.\d+)(?:\s*条)?$/u);
+  return match ? match[1] : '';
 }
 
 function groupScore(indexed, terms) {
@@ -140,9 +148,11 @@ function groupScore(indexed, terms) {
 
 function filtered() {
   const query = $('query').value.trim();
-  const groups = queryGroups(query);
+  const number = entryNumber(query);
+  const groups = number ? [] : queryGroups(query);
   const core = questionCore(query);
   return searchIndex.filter(({ entry }) =>
+    (!number || entry.id === number) &&
     (!$('chapter').value || String(entry.chapter) === $('chapter').value) &&
     (!$('topic').value || entry.tags['主题'].includes($('topic').value)) &&
     (!$('person').value || entry.tags['对象'].includes($('person').value))
