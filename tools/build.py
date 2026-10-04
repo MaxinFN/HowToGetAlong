@@ -152,6 +152,9 @@ def main():
     shutil.copyfile(ROOT / 'docs/平台素材收集-2026-10-04.md', refs / '平台素材收集-2026-10-04.md')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [短视频与网络文章候选素材](平台素材收集-2026-10-04.md)\n')
+    (refs / 'v1.16整合记录.md').write_text((ROOT / 'docs/核实记录/v1.16说明.md').read_text(encoding='utf-8').replace('../平台素材收集-2026-10-04.md', '平台素材收集-2026-10-04.md'), encoding='utf-8')
+    with (refs / '目录.md').open('a', encoding='utf-8') as stream:
+        stream.write('\n- [v1.16 平台素材整合记录](v1.16整合记录.md)\n')
     full = f'# {meta["name"]}\n\n{meta["positioning"]}\n\nv{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条\n\n'
     full += '先判断目标与条件，再做准备、选择行动，最后根据反馈调整。判断框架受《孙子兵法》的权衡、准备与因情境调整思路启发，生活建议仍是本项目的经验建议，未验证效果。\n\n'
     full += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
@@ -163,7 +166,7 @@ def main():
     selected_sources = [item for item in sources if item['id'] in referenced]
     if referenced - {item['id'] for item in selected_sources}:
         raise ValueError('正文来源编号缺少索引')
-    source_index = '# 来源索引\n\n以下来源编号对应正文中的选题、实践借鉴与有限研究背景。S 为原帖、R 为访谈与博客、P 为论文或更正、A 为机构文章。论文的对象、结论与局限见 [资料笔记](https://kkk-bot.github.io/HowToGetAlong/docs/research-notes.html)；来源不证明整条建议或具体话术有效，取得状态与核实日期逐项记录。\n\n'
+    source_index = '# 来源索引\n\n以下来源编号对应正文中的选题、实践借鉴与有限研究背景。S 为原帖、R 为访谈、博客与平台配文、P 为论文或更正、A 为机构文章或通知。论文的对象、结论与局限见 [资料笔记](https://kkk-bot.github.io/HowToGetAlong/docs/research-notes.html)；来源不证明整条建议或具体话术有效，取得状态与核实日期逐项记录。\n\n'
     for item in selected_sources:
         source_index += f'## {item["id"]}. {item["title"]}\n\n' + (item.get('citation', '') + '\n\n' if item.get('citation') else '') + f'来源日期：{item["date"]} · {item["status"]}。\n\n[查看来源]({item["url"]})\n\n'
     full += '\n\n' + source_index
@@ -206,7 +209,7 @@ def main():
             body += '<h4>表达示例</h4><p class="example">' + html.escape(block.removeprefix('原创示例：')) + '</p>'
         else:
             body += '<p>' + html.escape(block).replace('\n', '<br>') + '</p>'
-    body += '</section><section id="sources" class="chapter"><h2>来源索引</h2><p>S 为原帖，R 为访谈与博客，P 为论文、评论或更正，A 为机构文章。来源提供选题、实践借鉴或限定范围的研究背景，不验证整条建议或具体话术。</p>'
+    body += '</section><section id="sources" class="chapter"><h2>来源索引</h2><p>S 为原帖，R 为访谈、博客与平台配文，P 为论文、评论或更正，A 为机构文章或通知。来源提供选题、实践借鉴或限定范围的研究背景，不验证整条建议或具体话术。</p>'
     for item in selected_sources:
         body += '<h3 id="source-' + item['id'] + '">' + html.escape(item['id'] + ' ' + item['title']) + '</h3><p>' + html.escape((item.get('citation', '') + ' · ' if item.get('citation') else '') + item['date'] + ' · ' + item['status']) + ' · <a href="' + html.escape(item['url'], quote=True) + '">查看来源</a></p>'
     body += '</section>'
@@ -216,7 +219,7 @@ def main():
     for source, destination in {
         '交流复盘与场景练习.md': 'practice.md',
         '编写规范.md': 'editorial-guide.md',
-        '核实记录/v1.15说明.md': 'verification.md',
+        '核实记录/v1.16说明.md': 'verification.md',
     }.items():
         text = (ROOT / 'docs' / source).read_text(encoding='utf-8')
         if '/' in source:

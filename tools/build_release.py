@@ -47,12 +47,15 @@ def validate():
     for original, snapshot in [('docs/交流复盘与场景练习.md', '交流复盘与场景练习.md'),
                                ('docs/研究资料整理.md', '研究资料整理.md'),
                                ('docs/平台素材收集-2026-10-04.md', '平台素材收集-2026-10-04.md'),
-                               ('docs/核实记录/v1.15说明.md', 'v1.15整合记录.md')]:
+                               ('docs/核实记录/v1.15说明.md', 'v1.15整合记录.md'),
+                               ('docs/核实记录/v1.16说明.md', 'v1.16整合记录.md')]:
         expected = (ROOT / original).read_text(encoding='utf-8')
         if snapshot == '研究资料整理.md':
             expected = expected.replace('核实记录/v1.15说明.md', 'v1.15整合记录.md').replace('](editorial-guide.md)', '](https://kkk-bot.github.io/HowToGetAlong/docs/editorial-guide.html)')
         elif snapshot == 'v1.15整合记录.md':
             expected = expected.replace('../研究资料整理.md', '研究资料整理.md')
+        elif snapshot == 'v1.16整合记录.md':
+            expected = expected.replace('../平台素材收集-2026-10-04.md', '平台素材收集-2026-10-04.md')
         if expected != (snapshots / snapshot).read_text(encoding='utf-8'):
             raise ValueError(f'Skill 文档快照过期：{snapshot}')
     source = ROOT / '完整指南.md'

@@ -41,6 +41,7 @@ ALIASES = {
     'docs/核实记录/v1.14说明.md': 'docs/verification.html',
     'docs/核实记录/v1.14.1说明.md': 'docs/verification.html',
     'docs/核实记录/v1.15说明.md': 'docs/verification.html',
+    'docs/核实记录/v1.16说明.md': 'docs/verification.html',
     'docs/编写规范.md': 'docs/editorial-guide.html',
     'docs/Morris账号整理/学习笔记.md': 'docs/Morris账号整理/阅读笔记.html',
     '完整指南.md': '阅读全文.html',
