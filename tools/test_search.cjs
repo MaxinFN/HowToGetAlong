@@ -33,15 +33,45 @@ function page(url) {
   }
   element('entries').textContent = data;
   const location = { href: url, get hash() { return new URL(this.href).hash; } };
+  const windowHandlers = {};
+  const history = [url];
+  let cursor = 0;
   const context = vm.createContext({
     document: { getElementById: element, createElement: () => ({}) },
-    location, URL, history: { replaceState(_, __, href) { location.href = href; } },
-    window: { addEventListener() {} }
+    location, URL, history: {
+      replaceState(_, __, href) { history[cursor] = location.href = href; },
+      pushState(_, __, href) {
+        history.splice(cursor + 1);
+        history.push(href);
+        cursor++;
+        location.href = href;
+      }
+    },
+    window: { addEventListener(event, handler) { windowHandlers[event] = handler; } }
   });
   vm.runInContext(code, context);
   return { element, location, cards,
     run: expression => vm.runInContext(expression, context),
     query(value) { element('query').value = value; element('search-submit').handlers.click(); },
+    reference(id, modifiers = {}) {
+      let prevented = false;
+      const link = { dataset: { ref: id } };
+      element('list').handlers.click({
+        target: { closest: () => link }, button: 0, ...modifiers,
+        preventDefault() { prevented = true; }
+      });
+      return prevented;
+    },
+    back() {
+      assert(cursor > 0, 'Related-entry navigation must create a history entry');
+      location.href = history[--cursor];
+      windowHandlers.popstate();
+    },
+    forward() {
+      assert(cursor < history.length - 1);
+      location.href = history[++cursor];
+      windowHandlers.popstate();
+    },
     ids() { return [...cards.keys()]; }
   };
 }
@@ -80,4 +110,21 @@ const offline = page('file:///tmp/index.html#entry-4.1');
 offline.query('借钱不还');
 assert(offline.ids().includes('entry-4.2'));
 assert.equal(new URL(offline.location.href).hash, '');
-console.log('Search regression checks passed: intent, filters, refresh, jumps, reset and offline URL.');
+
+const references = page(site + '?q=借钱不还&chapter=4');
+const priorResults = references.ids();
+for (const modifiers of [{ metaKey: true }, { ctrlKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }]) {
+  assert.equal(references.reference('5.3', modifiers), false, 'Preserve native modified-link behavior');
+  assert.deepEqual(references.ids(), priorResults);
+  assert.equal(new URL(references.location.href).hash, '');
+}
+assert(references.reference('5.3'));
+assert(references.cards.get('entry-5.3').details.open);
+references.back();
+assert.equal(references.element('query').value, '借钱不还');
+assert.equal(references.element('chapter').value, '4');
+assert.deepEqual(references.ids(), priorResults);
+references.forward();
+assert(references.cards.get('entry-5.3').details.open);
+assert.equal(new URL(references.location.href).hash, '#entry-5.3');
+console.log('Search regression checks passed: intent, filters, refresh, jumps, reset, offline URL, modified links and back/forward.');
