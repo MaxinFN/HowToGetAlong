@@ -150,6 +150,7 @@ def main():
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [论文与文章资料笔记](研究资料整理.md)\n- [v1.15 论文与文章整合记录](v1.15整合记录.md)\n')
     shutil.copyfile(ROOT / 'docs/平台素材收集-2026-10-04.md', refs / '平台素材收集-2026-10-04.md')
+    shutil.copyfile(ROOT / 'docs/章节扩充资料-2026-10-04.md', refs / '章节扩充资料-2026-10-04.md')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [短视频与网络文章候选素材](平台素材收集-2026-10-04.md)\n')
     (refs / 'v1.16整合记录.md').write_text((ROOT / 'docs/核实记录/v1.16说明.md').read_text(encoding='utf-8').replace('../平台素材收集-2026-10-04.md', '平台素材收集-2026-10-04.md'), encoding='utf-8')

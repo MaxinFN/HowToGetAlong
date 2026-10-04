@@ -26,6 +26,7 @@ PAGES = {
     'docs/访谈与博客学习笔记.md': 'docs/interview-notes.html',
     'docs/研究资料整理.md': 'docs/research-notes.html',
     'docs/平台素材收集-2026-10-04.md': 'docs/platform-notes.html',
+    'docs/章节扩充资料-2026-10-04.md': 'docs/chapter-materials.html',
 }
 ALIASES = {
     'docs/交流复盘与场景练习.md': 'docs/practice.html',

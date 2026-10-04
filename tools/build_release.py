@@ -17,7 +17,7 @@ from build_docs import PAGES as DOC_SOURCES
 PAGES = ['index.html', '阅读全文.html', 'about.html', 'downloads/html.html', 'docs/usage.html',
          'docs/practice.html', 'docs/verification.html', 'docs/editorial-guide.html',
          'docs/sources.html', 'docs/strategy-notes.html', 'docs/interview-notes.html',
-         'docs/research-notes.html', 'docs/platform-notes.html']
+         'docs/research-notes.html', 'docs/platform-notes.html', 'docs/chapter-materials.html']
 
 
 class Links(HTMLParser):
@@ -47,6 +47,7 @@ def validate():
     for original, snapshot in [('docs/交流复盘与场景练习.md', '交流复盘与场景练习.md'),
                                ('docs/研究资料整理.md', '研究资料整理.md'),
                                ('docs/平台素材收集-2026-10-04.md', '平台素材收集-2026-10-04.md'),
+                               ('docs/章节扩充资料-2026-10-04.md', '章节扩充资料-2026-10-04.md'),
                                ('docs/核实记录/v1.15说明.md', 'v1.15整合记录.md'),
                                ('docs/核实记录/v1.16说明.md', 'v1.16整合记录.md')]:
         expected = (ROOT / original).read_text(encoding='utf-8')
