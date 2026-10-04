@@ -25,6 +25,9 @@ for (const [id, key] of [['topic', '主题'], ['person', '对象']]) {
 // A small, inspectable phrase dictionary, rather than splitting every Chinese
 // character. Specific phrases such as “借钱不还” are consumed before “借钱”.
 const concepts = [
+  { aliases: ['别人把照片发朋友圈', '发合照', '合照', '朋友圈照片', '发布照片', '聊天截图', '转发聊天记录', '公开聊天记录', '线上隐私'], matches: ['发布合照', '合照', '聊天截图', '线上隐私'] },
+  { aliases: ['看到别人被冒犯', '旁观者', '朋友被羞辱', '群里有人被欺负', '网络围攻', '群聊骚扰'], matches: ['旁观者', '看到别人被冒犯', '骚扰'] },
+  { aliases: ['offer催我答复', '延长offer回复期限', 'offer回复期限', '谈薪', '谈工资', '协商offer', 'offer协商', '申请延长回复期限', '回复期限'], matches: ['协商 offer', '回复期限'] },
   { aliases: ['敬酒词', '敬酒话术', '敬酒', '祝酒词', '祝酒', '举杯'], matches: ['敬酒', '敬酒词', '祝福'] },
   { aliases: ['借钱不还', '借钱没还', '欠钱不还', '借了不还', '不还钱', '没还钱', '还钱', '还款', '催还', '催款', '催债', '讨债'], matches: ['没还钱', '还款', '催还', '还钱'] },
   { aliases: ['借钱', '借款'], matches: ['借钱', '借款'] },

@@ -82,6 +82,15 @@ for (const query of ['被夸奖怎么回复', '别人夸我如何回应', '老�
   search.query(query);
   assert.equal(search.ids()[0], 'entry-7.10', query);
 }
+for (const [query, target] of [
+  ['别人把照片发朋友圈怎么办', 'entry-5.7'], ['怎么发合照', 'entry-5.7'],
+  ['转发聊天记录', 'entry-5.7'], ['群里有人被欺负怎么办', 'entry-5.8'],
+  ['看到别人被冒犯怎么办', 'entry-5.8'], ['offer催我答复', 'entry-10.7'],
+  ['怎么谈薪', 'entry-10.7'], ['延长offer回复期限', 'entry-10.7']
+]) {
+  search.query(query);
+  assert.equal(search.ids()[0], target, query);
+}
 search.query('送礼火星矿石');
 assert.equal(search.cards.size, 0, 'Unknown content must not become a broad gift search');
 search.query('怎么送礼');
@@ -104,7 +113,7 @@ assert.equal(new URL(deepLink.location.href).hash, '#entry-3.1');
 deepLink.element('reset').handlers.click();
 assert.equal(new URL(deepLink.location.href).hash, '');
 assert.equal(new URL(deepLink.location.href).search, '');
-assert.equal(deepLink.cards.size, 64);
+assert.equal(deepLink.cards.size, JSON.parse(data).length);
 
 const offline = page('file:///tmp/index.html#entry-4.1');
 offline.query('借钱不还');
@@ -128,3 +137,11 @@ references.forward();
 assert(references.cards.get('entry-5.3').details.open);
 assert.equal(new URL(references.location.href).hash, '#entry-5.3');
 console.log('Search regression checks passed: intent, filters, refresh, jumps, reset, offline URL, modified links and back/forward.');
+
+const newRelated = page(site + '?q=发合照&chapter=5');
+assert(newRelated.ids().includes('entry-5.7'));
+assert(newRelated.reference('5.8'));
+assert(newRelated.cards.get('entry-5.8').details.open);
+newRelated.back();
+assert(newRelated.ids().includes('entry-5.7'));
+assert.equal(newRelated.element('query').value, '发合照');
