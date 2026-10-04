@@ -128,6 +128,16 @@ def validate():
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     if digest not in (pdf.metadata.subject or ''):
         raise ValueError('PDF 正文指纹不一致，请重新生成')
+    from build_pdf import load_appreciation
+    appreciation_text, _, appreciation_digest = load_appreciation()
+    if 'Appreciation SHA256: ' + appreciation_digest not in (pdf.metadata.subject or ''):
+        raise ValueError('PDF 赞赏说明或图片过期，请重新生成')
+    contents_text = pdf.pages[1].extract_text()
+    normalized = lambda text: re.sub(r'\s+', '', text)
+    if '目录' not in contents_text or normalized(appreciation_text) not in normalized(contents_text):
+        raise ValueError('PDF 目录页缺少赞赏说明')
+    if not pdf.pages[1].images:
+        raise ValueError('PDF 目录页缺少赞赏码图片')
     outline_titles = []
     def visit(items):
         for item in items:
