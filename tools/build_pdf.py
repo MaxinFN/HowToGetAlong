@@ -11,7 +11,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Image, Table
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Image
 from reportlab.platypus.tableofcontents import TableOfContents
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,44 +24,6 @@ CHAPTER_RE = re.compile(r'^(\d+)\.\s+(.+)$')
 ENTRY_RE = re.compile(r'^(\d+(?:\.\d+)?)\.\s+(.+)$')
 SOURCE_RE = re.compile(r'^([SRPA]\d{2})\b[.：:、\s-]*(.*)$')
 INLINE_RE = re.compile(r'\[([^\]]+)\]\(([^)]+)\)|\*\*(.+?)\*\*|`([^`]+)`')
-
-
-def load_appreciation():
-    """Use the README as the source for the appreciation copy and original image."""
-    readme = (ROOT / 'README.md').read_text(encoding='utf-8')
-    section = re.search(r'^## 赞赏\s*\n(.*?)(?=^## |\Z)', readme, re.M | re.S)
-    if not section:
-        raise ValueError('README 缺少赞赏说明')
-    image = re.search(r'!\[[^\]]*\]\(([^)]+)\)', section[1])
-    if not image:
-        raise ValueError('README 赞赏说明缺少赞赏码图片')
-    image_path = (ROOT / image[1]).resolve()
-    if not image_path.is_relative_to(ROOT) or not image_path.is_file():
-        raise ValueError('赞赏码图片不在项目中或不存在')
-    description = re.sub(r'!\[[^\]]*\]\([^)]+\)', '', section[1]).strip()
-    if not description:
-        raise ValueError('README 赞赏说明为空')
-    digest = hashlib.sha256(description.encode('utf-8') + b'\0' +
-                            image_path.read_bytes()).hexdigest()
-    return description, image_path, digest
-
-
-def appreciation_panel(description, image_path, body):
-    """Keep the original poster and its explanation together below the contents."""
-    width = A4[0] - 92
-    title = ParagraphStyle('appreciation-title', parent=body,
-                           fontName='GuideChineseBold', fontSize=15, leading=23,
-                           spaceAfter=10)
-    panel = Table([[[Paragraph('赞赏', title), Paragraph(markup(description), body)],
-                    Image(str(image_path), width=178, height=178)]],
-                  colWidths=[width - 206, 206])
-    panel.setStyle([('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#eef4ed')),
-                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                    ('LEFTPADDING', (0, 0), (-1, -1), 14),
-                    ('RIGHTPADDING', (0, 0), (-1, -1), 14),
-                    ('TOPPADDING', (0, 0), (-1, -1), 14),
-                    ('BOTTOMPADDING', (0, 0), (-1, -1), 14)])
-    return panel
 
 
 def entry_key(number):
@@ -205,8 +167,7 @@ def build(input_path=ROOT / '完整指南.md', output_path=OUT,
           font_path=DEFAULT_FONT, bold_font_path=DEFAULT_BOLD_FONT):
     input_path, output_path = Path(input_path), Path(output_path)
     lines = input_path.read_text(encoding='utf-8').splitlines()
-    appreciation_text, appreciation_image, appreciation_digest = load_appreciation()
-    register_fonts(font_path, bold_font_path, [*lines, '赞赏', appreciation_text])
+    register_fonts(font_path, bold_font_path, lines)
     entries, sources = discover_targets(lines)
     body, chapter, heading, example = styles()
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -228,8 +189,6 @@ def build(input_path=ROOT / '完整指南.md', output_path=OUT,
                 toc.levelStyles = [ParagraphStyle('toc', parent=body, leading=24, spaceAfter=8)]
                 toc.dotsMinLevel = 0
                 story.append(toc)
-                story.extend([Spacer(1, 28),
-                              appreciation_panel(appreciation_text, appreciation_image, body)])
             story.append(PageBreak())
             in_body = True
             title = line[2:]
@@ -268,8 +227,7 @@ def build(input_path=ROOT / '完整指南.md', output_path=OUT,
             story.append(Paragraph(rendered, style))
     GuideDoc(str(output_path), pagesize=A4, rightMargin=46, leftMargin=46,
              topMargin=45, bottomMargin=49, title='人情世故指南', author='HowToGetAlong',
-             subject='Source SHA256: ' + hashlib.sha256(input_path.read_bytes()).hexdigest() +
-                     '; Appreciation SHA256: ' + appreciation_digest,
+             subject='Source SHA256: ' + hashlib.sha256(input_path.read_bytes()).hexdigest(),
              pageCompression=1).multiBuild(story, onFirstPage=footer, onLaterPages=footer)
     return output_path
 
