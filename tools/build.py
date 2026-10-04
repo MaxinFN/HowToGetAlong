@@ -81,6 +81,7 @@ def main():
     page = PAGE.replace('__DATA__', data).replace('__COUNT__', str(len(entries))).replace('__CHAPTERS__', str(len(chapters)))
     page = page.replace('__NAME__', html.escape(meta['name']))
     page = page.replace('__SEARCH_SCRIPT__', (ROOT / 'tools/search.js').read_text(encoding='utf-8'))
+    page = page.replace('<a href="docs/research-notes.html">论文与文章资料</a>', '<a href="docs/research-notes.html">论文与文章资料</a> · <a href="docs/platform-notes.html">短视频与网络素材</a>')
     page = page.replace('FIRST EDITION', 'PRACTICAL GUIDE')
     page = page.replace('<a href="README.md">项目说明 ↗</a>', '<span class="navlinks"><a href="阅读全文.html">阅读全文 ↗</a><a href="downloads/人情世故指南.pdf" download>下载 PDF</a><a href="docs/practice.html">场景练习</a><a href="about.html">项目说明 ↗</a></span>')
     page = page.replace('这是经验建议初稿，没有验证成功率', '本版全部为经验建议，未验证成功率')
@@ -148,6 +149,9 @@ def main():
     (refs / 'v1.15整合记录.md').write_text((ROOT / 'docs/核实记录/v1.15说明.md').read_text(encoding='utf-8').replace('../研究资料整理.md', '研究资料整理.md'), encoding='utf-8')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [论文与文章资料笔记](研究资料整理.md)\n- [v1.15 论文与文章整合记录](v1.15整合记录.md)\n')
+    shutil.copyfile(ROOT / 'docs/平台素材收集-2026-10-04.md', refs / '平台素材收集-2026-10-04.md')
+    with (refs / '目录.md').open('a', encoding='utf-8') as stream:
+        stream.write('\n- [短视频与网络文章候选素材](平台素材收集-2026-10-04.md)\n')
     full = f'# {meta["name"]}\n\n{meta["positioning"]}\n\nv{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条\n\n'
     full += '先判断目标与条件，再做准备、选择行动，最后根据反馈调整。判断框架受《孙子兵法》的权衡、准备与因情境调整思路启发，生活建议仍是本项目的经验建议，未验证效果。\n\n'
     full += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
