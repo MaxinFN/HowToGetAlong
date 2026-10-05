@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import re
 from urllib.parse import quote, unquote, urlsplit
+from site_assets import FAVICON
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = 'https://github.com/kkk-bot/HowToGetAlong'
@@ -27,6 +28,7 @@ PAGES = {
     'docs/研究资料整理.md': 'docs/research-notes.html',
     'docs/平台素材收集-2026-10-04.md': 'docs/platform-notes.html',
     'docs/章节扩充资料-2026-10-04.md': 'docs/chapter-materials.html',
+    'docs/Morris账号整理/学习笔记.md': 'docs/Morris账号整理/阅读笔记.html',
 }
 # Each historical record keeps its own content and URL, including in the ZIP.
 PAGES.update({file.relative_to(ROOT).as_posix(): f'docs/history/{file.stem}.html'
@@ -48,6 +50,57 @@ footer{border-top:1px solid var(--line);padding-top:20px;padding-bottom:30px;fon
 @media(max-width:600px){header,main,footer{padding-left:18px;padding-right:18px}.top{display:block}.top nav{justify-content:flex-start;margin-top:12px;font-size:14px;gap:6px 14px}main{padding-top:28px}h1{font-size:28px}h2{font-size:21px}h3{font-size:18px}th,td{padding:9px 10px}table{font-size:14px}.toc ul{display:block}.toc li{margin:8px 0}}
 @media print{body{background:white;color:#111;font-size:11pt}header,.toc,.footer-links{display:none}main,footer{width:auto;max-width:none;padding:0}h1{font-size:24pt}h2{font-size:17pt;break-after:avoid}h3{font-size:14pt;break-after:avoid}a{color:inherit}.table-wrap{overflow:visible}pre{white-space:pre-wrap}img{max-height:80vh}footer{margin-top:25px}}
 '''
+
+NOTES_CSS = '''
+.notes-filter{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:24px 0 10px}.notes-filter label{display:flex;flex-direction:column;gap:5px;font-size:14px}.notes-filter label:first-child{flex:1;min-width:180px}.notes-filter input,.notes-filter select{min-width:0;width:100%;font:inherit;color:var(--ink);background:white;border:1px solid var(--line);border-radius:6px;padding:8px 10px}.notes-filter input:focus-visible,.notes-filter select:focus-visible{outline:3px solid #9fc6af;outline-offset:3px}.note-card{border:1px solid var(--line);border-radius:8px;background:white;padding:16px 20px;margin:16px 0}.note-card h3{margin-top:0}.note-card p:last-child{margin-bottom:0}.notes-count{color:var(--muted);font-size:14px}
+@media(max-width:600px){.notes-filter label{width:100%}.note-card{padding:14px 16px}}@media print{.notes-filter,.notes-count{display:none}}
+'''
+
+NOTES_SCRIPT = '''<script>
+const query=document.getElementById('q'),category=document.getElementById('category');
+const cards=[...document.querySelectorAll('.note-card')];
+function filterNotes(){
+  const terms=query.value.normalize('NFKC').toLocaleLowerCase().trim().split(/\\s+/u).filter(Boolean);
+  let count=0;
+  for(const card of cards){
+    const text=card.textContent.normalize('NFKC').toLocaleLowerCase();
+    const visible=(!category.value||card.dataset.category===category.value)&&terms.every(term=>text.includes(term));
+    card.hidden=!visible;if(visible)count++;
+  }
+  document.getElementById('count').textContent=`显示 ${count} / ${cards.length} 条笔记`;
+}
+query.addEventListener('input',filterNotes);category.addEventListener('change',filterNotes);filterNotes();
+</script>'''
+
+
+def searchable_notes(body: str) -> str:
+    """Keep the notes' search/category controls while deriving all text from Markdown."""
+    chunks, categories = [], []
+    category, opened, count = '', False, 0
+    for part in re.split(r'(<h[23]\b[^>]*>.*?</h[23]>)', body, flags=re.S):
+        if part.startswith('<h2'):
+            if opened:
+                chunks.append('</section>')
+                opened = False
+            category = html.unescape(re.sub(r'<[^>]+>', '', part))
+        elif part.startswith('<h3') and re.match(r'^\d{2}\.', html.unescape(re.sub(r'<[^>]+>', '', part))):
+            if opened:
+                chunks.append('</section>')
+            chunks.append('<section class="note-card" data-category="' + html.escape(category, quote=True) + '">')
+            opened = True
+            count += 1
+            if category not in categories:
+                categories.append(category)
+        chunks.append(part)
+    if opened:
+        chunks.append('</section>')
+    controls = ('<div class="notes-filter"><label for="q">搜索笔记'
+                '<input id="q" type="search" placeholder="关键词，如边界、履约" autocomplete="off"></label>'
+                '<label for="category">主题<select id="category"><option value="">全部主题</option>'
+                + ''.join('<option value="' + html.escape(name, quote=True) + '">' + html.escape(name) + '</option>' for name in categories)
+                + '</select></label></div><p id="count" class="notes-count" role="status" aria-live="polite">'
+                + f'显示 {count} / {count} 条笔记</p>')
+    return ''.join(chunks).replace('</h1>', '</h1>' + controls, 1)
 
 
 def relative(target: str, output: str) -> str:
@@ -248,6 +301,9 @@ def build_page(source: str, output: str, project_name: str) -> None:
     first = re.search(r'^#\s+(.+)$', markdown, re.M)
     title = first[1] if first else project_name
     body, headings = render_markdown(markdown, source, output)
+    notes = source == 'docs/Morris账号整理/学习笔记.md'
+    if notes:
+        body = searchable_notes(body)
     if len(headings) >= 3:
         contents = '<details class="toc"><summary>本页目录</summary><ul>'
         contents += ''.join('<li><a href="#' + html.escape(ident, quote=True) + '">'
@@ -259,16 +315,17 @@ def build_page(source: str, output: str, project_name: str) -> None:
                                         ('docs/practice.html', '练习'), ('about.html', '项目说明')])
     source_url = REPO + '/blob/main/' + quote(source, safe='/')
     document = ('<!doctype html>\n<html lang="zh-CN"><head><meta charset="utf-8">'
+                + FAVICON +
                 '<meta name="viewport" content="width=device-width,initial-scale=1">'
                 '<meta name="source-sha256" content="' + hashlib.sha256(source_path.read_bytes()).hexdigest() + '">'
                 '<meta name="description" content="' + html.escape(project_name + ' · ' + title, quote=True) + '">'
                 '<title>' + html.escape(title) + ' · ' + html.escape(project_name) + '</title>'
-                '<style>' + CSS + '</style></head><body>'
+                '<style>' + CSS + (NOTES_CSS if notes else '') + '</style></head><body>'
                 '<header><div class="top"><a class="brand" href="' + html.escape(relative('index.html', output), quote=True)
                 + '">' + html.escape(project_name) + '</a><nav aria-label="站点导航">' + nav + '</nav></div></header>'
                 '<main>' + body + '</main><footer><p>根据自己的关系与条件选择做法。示例可以调整，经验建议未验证效果。</p>'
                 '<p class="footer-links">' + nav + '<a href="' + html.escape(source_url, quote=True)
-                + '">查看 Markdown 源文档</a></p></footer></body></html>\n')
+                + '">查看 Markdown 源文档</a></p></footer>' + (NOTES_SCRIPT if notes else '') + '</body></html>\n')
     (ROOT / output).parent.mkdir(parents=True, exist_ok=True)
     (ROOT / output).write_text(document, encoding='utf-8')
 

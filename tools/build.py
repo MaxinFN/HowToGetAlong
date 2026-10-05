@@ -6,6 +6,7 @@ import re
 import shutil
 import html
 from sources import load_sources
+from site_assets import FAVICON
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = ['判断关键', '行动前准备', '何时换办法', '遇到的情况', '先做什么', '可以怎么说', '分情境处理', '花掉什么', '可能换回什么', '例外与代价', '依据', '相关条目']
@@ -79,6 +80,7 @@ def main():
     meta = json.loads((ROOT / 'project.json').read_text(encoding='utf-8'))
     data = json.dumps(entries, ensure_ascii=False).replace('<', '\\u003c')
     page = PAGE.replace('__DATA__', data).replace('__COUNT__', str(len(entries))).replace('__CHAPTERS__', str(len(chapters)))
+    page = page.replace('<head>', '<head>' + FAVICON, 1)
     page = page.replace('__NAME__', html.escape(meta['name']))
     page = page.replace('__SEARCH_SCRIPT__', (ROOT / 'tools/search.js').read_text(encoding='utf-8'))
     page = page.replace('<a href="docs/research-notes.html">论文与文章资料</a>', '<a href="docs/research-notes.html">论文与文章资料</a> · <a href="docs/platform-notes.html">短视频与网络素材</a>')
@@ -95,7 +97,7 @@ def main():
     (ROOT / 'index.html').write_text(page, encoding='utf-8')
     download_page = '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>下载 HTML · 人情世故指南</title><style>body{max-width:700px;margin:64px auto;padding:0 24px;background:#f7f5ee;color:#20382f;font:16px/1.9 -apple-system,"PingFang SC",sans-serif}a{color:#225a43}.download{display:inline-block;padding:12px 20px;background:#225a43;color:white;border-radius:8px;text-decoration:none}</style></head><body><h1>下载 HTML 检索页</h1><p>下载的是项目 ZIP 里的 index.html。保存后，用浏览器打开即可离线搜索和查看全部条目。</p><p><a id="download" class="download" href="../index.html" download="index.html">下载 index.html</a></p><p>正在开始下载。如果浏览器没有自动下载，请点击上面的按钮。</p><p>其他阅读页和资料需要配套文件。需要完整离线使用，可 <a href="https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip">下载项目 ZIP</a>。</p><p><a href="../index.html">返回在线检索页</a></p><script>document.getElementById('download').click();</script></body></html>'''
     (ROOT / 'downloads').mkdir(exist_ok=True)
-    (ROOT / 'downloads/html.html').write_text(download_page, encoding='utf-8')
+    (ROOT / 'downloads/html.html').write_text(download_page.replace('<head>', '<head>' + FAVICON, 1), encoding='utf-8')
     refs = ROOT / 'skills/social-situations-guide/references'
     target = refs / 'book'
     target.mkdir(parents=True, exist_ok=True)
@@ -224,7 +226,7 @@ def main():
         body += '<h3 id="source-' + item['id'] + '">' + html.escape(item['id'] + ' ' + item['title']) + '</h3><p>' + html.escape((item.get('citation', '') + ' · ' if item.get('citation') else '') + item['date'] + ' · ' + item['status']) + ' · <a href="' + html.escape(item['url'], quote=True) + '">查看来源</a></p>'
     body += '</section>'
     css = 'body{max-width:850px;margin:40px auto;padding:0 22px;background:#faf9f4;color:#23392f;font:16px/1.85 -apple-system,"PingFang SC",sans-serif}h1{font-size:34px;line-height:1.4}h2{margin-top:48px}h3{font-size:22px;line-height:1.5}a{color:#225a43}nav,button{font:inherit}button{cursor:pointer}article{border-top:1px solid #dce1d7;padding-top:20px;margin:30px 0;scroll-margin-top:20px}dt{font-size:16px;color:#355d43;font-weight:650;margin-top:22px}dd{margin:8px 0 0;overflow-wrap:anywhere}.example{background:#f0f5ee;border:1px solid #d2dfce;border-radius:6px;padding:8px 12px;width:fit-content;max-width:100%}h4{font-size:16px;color:#355d43;margin:20px 0 8px}#practice p,#practice ul{margin:12px 0}#practice .example{margin-top:8px}@media(max-width:600px){body{margin:24px auto;padding:0 16px}h1{font-size:28px}h3{font-size:21px}.example{padding:8px 10px}}.muted{color:#64736b}@media print{body{background:white;margin:0;font-size:11pt}nav{display:none}.chapter{break-before:page}h3,dt{break-after:avoid}dd{orphans:3;widows:3}a{color:inherit;text-decoration:none}}'
-    (ROOT / '阅读全文.html').write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + html.escape(meta['name']) + ' · 完整阅读</title><style>' + css + '</style><body>' + body + '</body></html>', encoding='utf-8')
+    (ROOT / '阅读全文.html').write_text('<!doctype html><html lang="zh-CN">' + FAVICON + '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + html.escape(meta['name']) + ' · 完整阅读</title><style>' + css + '</style><body>' + body + '</body></html>', encoding='utf-8')
     # ASCII-path copies keep GitHub entry points accessible; Chinese files remain the source.
     for source, destination in {
         '交流复盘与场景练习.md': 'practice.md',
