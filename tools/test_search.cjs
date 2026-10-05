@@ -95,6 +95,12 @@ search.query('5.7');
 assert.equal(search.cards.size, 0, 'Entry-number search must respect selected filters');
 search.element('chapter').value = '';
 for (const [query, target] of [
+  ['推荐信', 'entry-2.7'], ['老师写推荐信', 'entry-2.7'],
+  ['朋友分享好消息', 'entry-6.7'], ['朋友拿到offer', 'entry-6.7'],
+  ['不想去聚餐', 'entry-7.11'], ['还不确定能不能去', 'entry-7.11'],
+  ['找前辈了解岗位', 'entry-10.8'], ['自我介绍', 'entry-10.8'],
+  ['好久没联系的朋友', 'entry-6.2'], ['结束聊天', 'entry-7.5'],
+  ['礼物怎么选', 'entry-4.4'],
   ['offer 催我答复', 'entry-10.7'], ['申请延长 offer 回复期限', 'entry-10.7'],
   ['被别人夸奖时，要如何回复', 'entry-7.10'], ['领导夸我工作做得好怎么回复', 'entry-7.10'],
   ['转发截图', 'entry-5.7'], ['老板临时让我加班', 'entry-3.1'],

@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "sources": [
     {
       "id": "A06",
@@ -63,6 +63,33 @@
       "citation": "Subramanian, G. What is BATNA? How to Find Your Best Alternative to a Negotiated Agreement. Harvard PON.",
       "status": "已取得正文；实践框架文章，不称为 2026 年新实验或效果保证",
       "material_type": "机构实践文章"
+    },
+    {
+      "id": "A13",
+      "title": "推荐信请求的推荐人选择与材料准备",
+      "date": "发布日期未标明；核实日期 2026-10-05",
+      "url": "https://history.fas.harvard.edu/sites/g/files/omnuum4421/files/history/files/letter_of_recommendation_guidelinesamb.pdf",
+      "citation": "Harvard University, Department of History. Guidelines for Requesting Letters of Recommendation.",
+      "status": "已读完整一页官方指南；院系实务建议，不移植为其他学校规定或固定提前天数",
+      "material_type": "大学实践指南"
+    },
+    {
+      "id": "A14",
+      "title": "向从业者了解岗位的信息访谈准备",
+      "date": "发布日期未标明；核实日期 2026-10-05",
+      "url": "https://capd.mit.edu/resources/conducting-informational-interviews/",
+      "citation": "MIT Career Advising & Professional Development. Conducting Informational Interviews.",
+      "status": "已读官方正文；职业沟通指南，不是效果实验，不采用统一时长或感谢期限",
+      "material_type": "大学实践指南"
+    },
+    {
+      "id": "A15",
+      "title": "自我介绍的相关背景、兴趣与交流目的",
+      "date": "发布日期未标明；核实日期 2026-10-05",
+      "url": "https://ocs.yale.edu/channels/tell-me-about-yourself/",
+      "citation": "Yale Office of Career Strategy. Tell Me About Yourself.",
+      "status": "已读官方页面正文；按交流情境调整，不采用统一介绍时长，不视为效果研究",
+      "material_type": "大学实践指南"
     }
   ]
 }

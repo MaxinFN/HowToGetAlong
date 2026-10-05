@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "sources": [
     {
       "id": "P01",
@@ -135,6 +135,69 @@
       "status": "读到页面正文，未查看嵌入视频或下载模板",
       "citation": "Lotti, L. / UCL (2025-10-20). Team Agreements: Embedding Inclusivity in Group Work.",
       "material_type": "机构实践文章"
+    },
+    {
+      "id": "P14",
+      "title": "好消息分享与回应：保留关系及文化条件",
+      "date": "2004；核实日期 2026-10-05",
+      "url": "https://static1.squarespace.com/static/60465101340348032b488a55/t/6091530496145d3ee02aaac8/1620136708366/2004-JPSP-Gable-Impett-et-al.pdf",
+      "status": "核对原文摘要、部分方法与讨论；未复算数据，不将关联写成话术的因果效果",
+      "citation": "Gable, S. L., Reis, H. T., Impett, E. A., & Asher, E. R. (2004). What Do You Do When Things Go Right? The Intrapersonal and Interpersonal Benefits of Sharing Positive Events. Journal of Personality and Social Psychology, 87(2), 228–245. DOI：10.1037/0022-3514.87.2.228。",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P15",
+      "title": "拒绝娱乐社交邀请的负面预期可能偏高",
+      "date": "2023 年在线发表；2024 年期刊收录；核实日期 2026-10-05",
+      "url": "https://www.apa.org/pubs/journals/releases/psp-pspi0000443.pdf",
+      "status": "检索取得原文摘要与引言，核对题录；直接打开 PDF 返回不完整，未完整阅读全文",
+      "citation": "Givi, J., & Kirk, C. P. (2024). Saying No: The Negative Ramifications From Invitation Declines Are Less Severe Than We Think. Journal of Personality and Social Psychology, 126(6), 1103–1115. DOI：10.1037/pspi0000443。",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P16",
+      "title": "待定邀请答复：不默认含糊比明确拒绝更受欢迎",
+      "date": "2025-08-07（在线发表）；核实日期 2026-10-05",
+      "url": "https://www.southampton.ac.uk/~crsi/Givi%2C%20Kirk%2C%20Grossman%2C%20%26%20Sedikides%2C%202025%2C%20JESP.pdf",
+      "status": "直接读取原文摘要、引言与讨论；样本来自美国，未复算六项实验",
+      "citation": "Givi, J., Kirk, C. P., Grossman, D. M., & Sedikides, C. (2025). Maybe Don’t Say “Maybe”: How and Why Invitees Fail to Realize That They Should Not Respond to Invitations With a “Maybe”. Journal of Experimental Social Psychology, 121, 104814. DOI：10.1016/j.jesp.2025.104814。",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P17",
+      "title": "主动问候可能比发起者预期更受欣赏",
+      "date": "2022 年在线发表；2023 年期刊收录；核实日期 2026-10-05",
+      "url": "https://www.apa.org/pubs/journals/releases/psp-pspi0000402.pdf",
+      "status": "核对摘要、题录及检索返回的部分实验说明；未完整通读原文与补充材料",
+      "citation": "Liu, P. J., Rim, S., Min, L., & Min, K. E. (2023). The Surprise of Reaching Out: Appreciated More Than We Think. Journal of Personality and Social Psychology, 124(4), 754–771. DOI：10.1037/pspi0000402。",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P18",
+      "title": "送礼时的惊喜与收礼后的使用价值",
+      "date": "2016；核实日期 2026-10-05",
+      "url": "https://journals.sagepub.com/doi/10.1177/0963721416656937",
+      "status": "已读主要正文与综述框架，未逐一重新核对所引用研究",
+      "citation": "Galak, J., Givi, J., & Williams, E. F. (2016). Why Certain Gifts Are Great to Give but Not to Get: A Framework for Understanding Errors in Gift Giving. Current Directions in Psychological Science, 25(6), 380–385. DOI：10.1177/0963721416656937。",
+      "material_type": "研究综述"
+    },
+    {
+      "id": "P19",
+      "title": "聊天双方不一定知道彼此想何时结束",
+      "date": "2021；核实日期 2026-10-05",
+      "url": "https://dtg.sites.fas.harvard.edu/MASTROIANNI2021.pdf",
+      "status": "已读摘要、部分方法、结果与讨论；未复算数据，未验证本项目的收尾表达",
+      "citation": "Mastroianni, A. M., Gilbert, D. T., Cooney, G., & Wilson, T. D. (2021). Do Conversations End When People Want Them To? Proceedings of the National Academy of Sciences, 118(10), e2011809118. DOI：10.1073/pnas.2011809118。",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P20",
+      "title": "文字分歧中的接纳性表达与合作意愿",
+      "date": "2020；核实日期 2026-10-05",
+      "url": "https://www.mikeyeomans.info/papers/receptiveness.pdf",
+      "status": "核对摘要、表达干预说明、部分结果和局限；主要为文字与单次交流，未复算数据",
+      "citation": "Yeomans, M., Minson, J., Collins, H., Chen, F., & Gino, F. (2020). Conversational Receptiveness: Improving Engagement With Opposing Views. Organizational Behavior and Human Decision Processes, 160, 131–148. DOI：10.1016/j.obhdp.2020.03.011。",
+      "material_type": "研究论文"
     }
   ]
 }
