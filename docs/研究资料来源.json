@@ -198,6 +198,33 @@
       "status": "核对摘要、表达干预说明、部分结果和局限；主要为文字与单次交流，未复算数据",
       "citation": "Yeomans, M., Minson, J., Collins, H., Chen, F., & Gino, F. (2020). Conversational Receptiveness: Improving Engagement With Opposing Views. Organizational Behavior and Human Decision Processes, 160, 131–148. DOI：10.1016/j.obhdp.2020.03.011。",
       "material_type": "研究论文"
+    },
+    {
+      "id": "P21",
+      "title": "重新联系老朋友：知道值得联系，仍可能迟迟不开口",
+      "date": "2024-04-23；核实日期 2026-10-06",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11332216/",
+      "citation": "Aknin, L. B., & Sandstrom, G. M. (2024). People are surprisingly hesitant to reach out to old friends. Communications Psychology. DOI：10.1038/s44271-024-00075-8。",
+      "status": "已读摘要、研究设计、研究 7 的方法与结果、讨论和限制；未逐项审阅全部补充材料。",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P22",
+      "title": "求助者可能低估帮助者的积极感受",
+      "date": "2022；核实日期 2026-10-06",
+      "url": "https://www.xuan-zhao.com/uploads/5/6/1/6/5616522/happy_to_have_helped_final.pdf",
+      "citation": "Zhao, X., & Epley, N. (2022). Surprisingly Happy to Have Helped: Underestimating Prosociality Creates a Misplaced Barrier to Asking for Help. Psychological Science. DOI：10.1177/09567976221097615。",
+      "status": "已读摘要、部分方法与结果、总讨论和限制；未逐项复核全部分析。",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P23",
+      "title": "亲近不等于自动理解：熟人间也可能高估沟通成功",
+      "date": "2011 年卷期；2010-09-18 在线；核实日期 2026-10-06",
+      "url": "https://faculty.wharton.upenn.edu/wp-content/uploads/2015/02/2.-Savitsky-Comm-Bias.pdf",
+      "citation": "Savitsky, K., Keysar, B., Epley, N., Carter, T., & Swanson, A. (2011). The closeness-communication bias: Increased egocentrism among friends versus strangers. Journal of Experimental Social Psychology. DOI：10.1016/j.jesp.2010.09.005。",
+      "status": "已读论文正文的方法、结果与讨论；未对图表作独立统计复算。",
+      "material_type": "研究论文"
     }
   ]
 }

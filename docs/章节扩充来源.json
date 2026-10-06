@@ -90,6 +90,60 @@
       "citation": "Yale Office of Career Strategy. Tell Me About Yourself.",
       "status": "已读官方页面正文；按交流情境调整，不采用统一介绍时长，不视为效果研究",
       "material_type": "大学实践指南"
+    },
+    {
+      "id": "A16",
+      "title": "支持朋友，同时留意自己的负担",
+      "date": "发布日期未标明；核实日期 2026-10-06",
+      "url": "https://onepard.lafayette.edu/helping-a-friend/",
+      "citation": "Lafayette College. Helping A Friend.",
+      "status": "已读相关正文，包括提供支持、何时设边界及怎样表达边界。页面注明资料经过其他机构资源改编，属于学校实践指南。",
+      "material_type": "机构指南或工具"
+    },
+    {
+      "id": "A17",
+      "title": "讨论时，不把沉默当成共识",
+      "date": "发布日期未标明；核实日期 2026-10-06",
+      "url": "https://bokcenter.harvard.edu/navigating-challenging-conversations",
+      "citation": "Harvard Derek Bok Center. Navigating Challenging Conversations.",
+      "status": "已读正文建议。",
+      "material_type": "机构指南或工具"
+    },
+    {
+      "id": "A18",
+      "title": "冲突之后，安排一次修复谈话",
+      "date": "发布日期未标明；核实日期 2026-10-06",
+      "url": "https://www.health.harvard.edu/mindscape/for-parents-and-caregivers/giving-and-getting-support/giving-support/repair",
+      "citation": "Harvard Health Publishing. Mindscape: Repair.",
+      "status": "已读相关正文及示例。",
+      "material_type": "机构指南或工具"
+    },
+    {
+      "id": "A19",
+      "title": "说“不”的练习：简短、真实、清楚",
+      "date": "创建于 2008-11；资源首页更新于 2019-10-21；核实日期 2026-10-06",
+      "url": "https://cci.health.wa.gov.au/~/media/CCI/Consumer%20Modules/Assert%20Yourself/Assert%20Yourself%20-%2006%20-%20How%20to%20Say%20No%20Assertively.pdf",
+      "citation": "Michel, F., & Fursland, A. Centre for Clinical Interventions. Assert Yourself! Module 6: How to Say “No” Assertively.",
+      "status": "已读模块正文、拒绝方式与模块说明。",
+      "material_type": "机构指南或工具"
+    },
+    {
+      "id": "A20",
+      "title": "钱的讨论：留下决定、缺少的信息和下一步",
+      "date": "发布日期未标明；核实日期 2026-10-06",
+      "url": "https://files.consumerfinance.gov/f/documents/cfpb_ymyg-servicemembers-tool_planning-important-money-conversations.pdf",
+      "citation": "Consumer Financial Protection Bureau. Your Money, Your Goals: Planning for important money conversations. Military community companion tool.",
+      "status": "已读 4 页工具内容及免责声明。",
+      "material_type": "机构指南或工具"
+    },
+    {
+      "id": "A21",
+      "title": "校园练习可以从日常冲突和支持者自身需要入手",
+      "date": "2026-05-21；活动日期 2026-05-20；核实日期 2026-10-06",
+      "url": "https://www.xaipe.edu.cn/xgb/info/1028/5702.htm",
+      "citation": "西安体育学院学生工作部：《用一座心桥，联结每一份真诚的成长——“心桥计划”心理委员人际关系成长团辅活动圆满开展》。",
+      "status": "已读学校活动报道；不是活动录像、完整课程或效果评估报告。",
+      "material_type": "高校活动报道"
     }
   ]
 }
