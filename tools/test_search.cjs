@@ -84,12 +84,14 @@ for (const entry of JSON.parse(data)) {
   search.query(entry.title);
   assert(search.ids().includes('entry-' + entry.id), 'Find an entry by its full title: ' + entry.id);
 }
-for (const query of ['条目 5.7', '第5.7条', '５．７', '#entry-5.7']) {
+for (const query of ['条目 5.7', '第5.7条', '５．７', '#entry-5.7', '5.7？', '第5.7条？']) {
   search.query(query);
   assert.deepEqual(search.ids(), ['entry-5.7'], query);
 }
 search.query('99.1');
 assert.equal(search.cards.size, 0, 'Unknown entry numbers must not search unrelated body text');
+search.query('99.1？');
+assert.equal(search.cards.size, 0, 'Unknown entry numbers stay strict with trailing punctuation');
 search.element('chapter').value = '4';
 search.query('5.7');
 assert.equal(search.cards.size, 0, 'Entry-number search must respect selected filters');
@@ -115,6 +117,23 @@ for (const query of ['被夸奖怎么回复', '别人夸我如何回应', '老�
   search.query(query);
   assert.equal(search.ids()[0], 'entry-7.10', query);
 }
+for (const query of [
+  '收到夸奖怎么回复', '收到夸赞如何回应', '收到赞美怎么回答',
+  '被领导夸了怎么回', '老板夸我怎么回', '被同事夸了怎么回',
+  '被夸奖怎么回复？', '被夸奖怎么回复?', '收到夸奖怎么回复？',
+  '被领导夸了怎么回？', '我被领导夸了，该怎么回？'
+]) {
+  search.query(query);
+  assert.equal(search.ids()[0], 'entry-7.10', 'Find replies to praise: ' + query);
+}
+for (const query of ['怎么夸别人', '如何赞美朋友']) {
+  search.query(query);
+  assert.equal(search.ids()[0], 'entry-7.7', 'Keep giving-praise intent distinct: ' + query);
+}
+search.query('借钱不还怎么办？');
+assert.equal(search.ids()[0], 'entry-4.2', 'Ignore trailing question punctuation');
+search.query('收到夸奖火星矿石怎么回复？');
+assert.equal(search.cards.size, 0, 'Praise aliases must preserve unknown query content');
 for (const [query, target] of [
   ['别人把照片发朋友圈怎么办', 'entry-5.7'], ['怎么发合照', 'entry-5.7'],
   ['转发聊天记录', 'entry-5.7'], ['群里有人被欺负怎么办', 'entry-5.8'],

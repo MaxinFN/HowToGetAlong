@@ -6,6 +6,7 @@ const escape = value => String(value).replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[char]));
 const normalize = value => String(value).normalize('NFKC').toLocaleLowerCase();
+const normalizeQuery = value => normalize(value).trim().replace(/[，。！？、；：,.;!?]+$/u, '').trim();
 const filterIds = ['query', 'chapter', 'topic', 'person'];
 let allExpanded = false;
 
@@ -43,8 +44,11 @@ const concepts = [
   { aliases: ['不想喝酒', '不喝酒', '拒酒', '劝酒'], matches: ['不喝酒', '拒酒'] },
   { aliases: ['请客吃饭', '聚餐', '饭局', '组局', '酒局'], matches: ['聚餐', '饭局'] },
   { aliases: ['聊天冷场', '接话', '聊天', '闲聊', '冷场'], matches: ['聊天', '话题'] },
-  { aliases: ['被夸', '被夸奖', '被夸赞', '被别人夸奖', '被别人夸赞', '被表扬', '接夸', '怎么回复夸奖', '夸我工作做得好', '夸我做得好', '夸我表现好', '夸我', '别人夸我'], matches: ['被夸赞', '接夸'] },
-  { aliases: ['赞美', '夸赞', '夸人', '夸奖', '表扬'], matches: ['夸赞', '赞美'] },
+  { aliases: ['被夸', '被夸奖', '被夸赞', '被别人夸奖', '被别人夸赞', '被表扬', '接夸', '怎么回复夸奖', '夸我工作做得好', '夸我做得好', '夸我表现好', '夸我', '别人夸我',
+      '收到夸奖', '收到夸赞', '收到赞美', '被夸了', '被赞美',
+      '被领导夸了', '被老板夸了', '被老师夸了', '被同事夸了', '被朋友夸了', '被长辈夸了', '被客户夸了',
+      '领导夸我', '老板夸我', '领导表扬我', '老板表扬我'], matches: ['被夸赞', '接夸'] },
+  { aliases: ['赞美', '夸赞', '夸人', '夸别人', '夸奖', '表扬'], matches: ['夸赞', '赞美'] },
   { aliases: ['求人帮忙', '求助', '求人'], matches: ['求助'] },
   { aliases: ['帮忙', '帮助'], matches: ['帮忙', '帮助'] },
   { aliases: ['表达感谢', '感谢', '道谢', '答谢'], matches: ['感谢'] },
@@ -102,10 +106,10 @@ const searchIndex = entries.map((entry, position) => ({
 }));
 
 function questionCore(query) {
-  return normalize(query).trim()
+  return normalizeQuery(query)
     .replace(/^(?:请问|请教一下|我想知道|我想问|帮我看看|帮我|我应该|我该|应该|到底|该|可以|要|想|我)(?:\s*)/u, '')
     .replace(/^(?:怎么才能|怎么样|怎么|如何|怎样)(?:\s*)/u, '')
-    .replace(/(?:该怎么办|怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|好不好|可以吗|合适吗|[呢吗啊呀吧])(?:\s*)$/u, '')
+    .replace(/(?:该怎么办|怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|怎么回|如何回|好不好|可以吗|合适吗|[呢吗啊呀吧])(?:\s*)$/u, '')
     .trim();
 }
 
@@ -129,14 +133,14 @@ function queryGroups(query) {
   for (const remainder of rest.split(/[\s，。！？、；：,.;!?]+/u).filter(Boolean)) {
     const significant = remainder
       .replace(/^(?:请问|怎么才能|怎么样|怎么|如何|怎样|应该|该|我想|我|你|对方|别人|有人|给|向|跟|和|与|的|要|想|不想)+/u, '')
-      .replace(/(?:怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|的时候|的时候该|时|的|了|呢|吗|啊|呀|吧|该)+$/u, '');
+      .replace(/(?:怎么办|怎么处理|怎么说|怎么做|如何处理|怎么回复|如何回复|怎么回应|如何回应|怎么回答|如何回答|怎么回|如何回|的时候|的时候该|时|的|了|呢|吗|啊|呀|吧|该)+$/u, '');
     if (significant) groups.push([significant]);
   }
   return groups;
 }
 
 function entryNumber(query) {
-  const match = normalize(query).trim().match(/^(?:#?entry[-\s]*|条目\s*|第\s*)?(\d+\.\d+)(?:\s*条)?$/u);
+  const match = normalizeQuery(query).match(/^(?:#?entry[-\s]*|条目\s*|第\s*)?(\d+\.\d+)(?:\s*条)?$/u);
   return match ? match[1] : '';
 }
 
