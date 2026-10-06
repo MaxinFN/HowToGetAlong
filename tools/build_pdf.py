@@ -13,6 +13,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Image
 from reportlab.platypus.tableofcontents import TableOfContents
+from site_assets import COPYRIGHT_NOTICE
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'downloads' / '人情世故指南.pdf'
@@ -137,7 +138,7 @@ def footer(canvas, doc):
     canvas.saveState()
     canvas.setFont('GuideChinese', 9)
     canvas.setFillColor(colors.HexColor('#65756b'))
-    canvas.drawString(46, 27, '人情世故指南 · 经验建议')
+    canvas.drawString(46, 27, '人情世故指南 · ' + COPYRIGHT_NOTICE)
     canvas.drawRightString(A4[0] - 46, 27, str(doc.page))
     canvas.restoreState()
 

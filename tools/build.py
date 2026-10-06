@@ -6,7 +6,8 @@ import re
 import shutil
 import html
 from sources import load_sources
-from site_assets import FAVICON
+from site_assets import FAVICON, COPYRIGHT_NOTICE
+from build_docs import render_markdown
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = ['判断关键', '行动前准备', '何时换办法', '遇到的情况', '先做什么', '可以怎么说', '分情境处理', '花掉什么', '可能换回什么', '例外与代价', '依据', '相关条目']
@@ -78,6 +79,8 @@ PAGE = r'''<!doctype html>
 def main():
     entries, chapters = read_entries()
     meta = json.loads((ROOT / 'project.json').read_text(encoding='utf-8'))
+    copyright_text = (ROOT / 'docs/版权说明.md').read_text(encoding='utf-8')
+    copyright_body, _ = render_markdown(copyright_text.split('\n\n', 1)[1], 'docs/版权说明.md', 'index.html')
     data = json.dumps(entries, ensure_ascii=False).replace('<', '\\u003c')
     page = PAGE.replace('__DATA__', data).replace('__COUNT__', str(len(entries))).replace('__CHAPTERS__', str(len(chapters)))
     page = page.replace('<head>', '<head>' + FAVICON, 1)
@@ -94,9 +97,13 @@ def main():
     page = page.replace('v0.1 · 2026-10-02 · 初版', f'v{meta["version"]} · {meta["date"]} ·')
     disclaimer_html = '<p class="note"><strong>免责声明：仅供参考。</strong> ' + html.escape(meta['disclaimer']) + '</p>'
     page = page.replace('</div></header>', disclaimer_html + '</div></header>', 1)
+    page = page.replace('</footer>', '<details id="copyright"><summary>版权说明 · '
+                        + html.escape(COPYRIGHT_NOTICE) + '</summary>' + copyright_body + '</details></footer>', 1)
     (ROOT / 'index.html').write_text(page, encoding='utf-8')
     download_page = '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>下载 HTML · 人情世故指南</title><style>body{max-width:700px;margin:64px auto;padding:0 24px;background:#f7f5ee;color:#20382f;font:16px/1.9 -apple-system,"PingFang SC",sans-serif}a{color:#225a43}.download{display:inline-block;padding:12px 20px;background:#225a43;color:white;border-radius:8px;text-decoration:none}</style></head><body><h1>下载 HTML 检索页</h1><p>下载的是项目 ZIP 里的 index.html。保存后，用浏览器打开即可离线搜索和查看全部条目。</p><p><a id="download" class="download" href="../index.html" download="index.html">下载 index.html</a></p><p>正在开始下载。如果浏览器没有自动下载，请点击上面的按钮。</p><p>其他阅读页和资料需要配套文件。需要完整离线使用，可 <a href="https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip">下载项目 ZIP</a>。</p><p><a href="../index.html">返回在线检索页</a></p><script>document.getElementById('download').click();</script></body></html>'''
     (ROOT / 'downloads').mkdir(exist_ok=True)
+    download_page = download_page.replace('<script>', '<p>' + html.escape(COPYRIGHT_NOTICE)
+                                         + ' · <a href="../docs/copyright.html">版权说明</a></p><script>', 1)
     (ROOT / 'downloads/html.html').write_text(download_page.replace('<head>', '<head>' + FAVICON, 1), encoding='utf-8')
     refs = ROOT / 'skills/social-situations-guide/references'
     target = refs / 'book'
@@ -107,6 +114,9 @@ def main():
         shutil.copyfile(ROOT / 'book' / chapter['file'], target / chapter['file'])
     toc = f'# 正文目录\n\n版本：v{meta["version"]}；快照日期：{meta["date"]}；全部为经验建议。\n\n'
     toc += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
+    toc += COPYRIGHT_NOTICE + '\n\n'
+    shutil.copyfile(ROOT / 'docs/版权说明.md', refs / '版权说明.md')
+    toc += '- [版权与使用说明](版权说明.md)\n'
     toc += '\n'.join(f'- [{c["title"]}](book/{c["file"]})' for c in chapters) + '\n'
     practice = (ROOT / 'docs/交流复盘与场景练习.md').read_text(encoding='utf-8')
     shutil.copyfile(ROOT / 'docs/交流复盘与场景练习.md', refs / '交流复盘与场景练习.md')
@@ -166,10 +176,11 @@ def main():
         current_snapshot = f'v{meta["version"]}整合记录.md'
         shutil.copyfile(current_record, refs / current_snapshot)
         with (refs / '目录.md').open('a', encoding='utf-8') as stream:
-            stream.write(f'\n- [v{meta["version"]} 检查与修复记录]({current_snapshot})\n')
+            stream.write(f'\n- [v{meta["version"]} 更新与核实记录]({current_snapshot})\n')
     full = f'# {meta["name"]}\n\n{meta["positioning"]}\n\nv{meta["version"]} · {meta["date"]} · {len(chapters)} 章 {len(entries)} 条\n\n'
     full += '先判断目标与条件，再做准备、选择行动，最后根据反馈调整。判断框架受《孙子兵法》的权衡、准备与因情境调整思路启发，生活建议仍是本项目的经验建议，未验证效果。\n\n'
     full += '**免责声明：仅供参考。** ' + meta['disclaimer'] + '\n\n'
+    full += COPYRIGHT_NOTICE + ' 使用与转载范围见文末版权说明。\n\n'
     full += '本版全部为经验建议。示例表达可以调整，效果取决于关系和环境；涉及具体制度请查适用规则。\n\n'
     full += '\n\n'.join((ROOT / 'book' / c['file']).read_text(encoding='utf-8') for c in chapters)
     full += '\n\n' + practice
@@ -182,6 +193,7 @@ def main():
     for item in selected_sources:
         source_index += f'## {item["id"]}. {item["title"]}\n\n' + (item.get('citation', '') + '\n\n' if item.get('citation') else '') + f'来源日期：{item["date"]} · {item["status"]}。\n\n[查看来源]({item["url"]})\n\n'
     full += '\n\n' + source_index
+    full += '\n\n' + copyright_text
     (refs / '来源索引.md').write_text(source_index, encoding='utf-8')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [来源索引](来源索引.md)\n')
@@ -193,7 +205,7 @@ def main():
     body += '<p>先判断目标与条件，再做准备、选择行动，根据反馈调整。框架受《孙子兵法》启发，古文不是这些生活建议有效的证明。<a href="docs/strategy-notes.html">查看来源与转译边界</a>。</p>'
     body += '<p><a href="docs/Morris账号整理/阅读笔记.html">Morris 来源笔记</a> · <a href="docs/interview-notes.html">访谈与博客笔记</a> · <a href="docs/research-notes.html">论文与文章资料</a> · <a href="docs/verification.html">查看本次整合记录</a>；正文补充仍为经验建议。</p>'
     body += '<nav><a href="index.html">返回检索页</a> · <a href="downloads/人情世故指南.pdf" download>下载 PDF</a> · <a href="完整指南.md" download>下载完整正文</a> · <a href="docs/practice.html">场景练习</a> · <button onclick="window.print()">打印 / 保存为 PDF</button></nav><h2>目录</h2><ol>'
-    body += ''.join(f'<li><a href="#chapter-{c["number"]}">{html.escape(c["title"])}</a></li>' for c in chapters) + '</ol><p><a href="#practice">附录：交流复盘与场景练习</a> · <a href="#sources">来源索引</a></p>'
+    body += ''.join(f'<li><a href="#chapter-{c["number"]}">{html.escape(c["title"])}</a></li>' for c in chapters) + '</ol><p><a href="#practice">附录：交流复盘与场景练习</a> · <a href="#sources">来源索引</a> · <a href="#copyright">版权说明</a></p>'
     for chapter in chapters:
         body += f'<h2 class="chapter" id="chapter-{chapter["number"]}">{html.escape(chapter["title"])}</h2>'
         for entry in [e for e in entries if e['chapter'] == chapter['number']]:
@@ -224,7 +236,7 @@ def main():
     body += '</section><section id="sources" class="chapter"><h2>来源索引</h2><p>S 为原帖，R 为访谈、博客与平台配文，P 为论文、评论或更正，A 为机构文章或通知。来源提供选题、实践借鉴或限定范围的研究背景，不验证整条建议或具体话术。</p>'
     for item in selected_sources:
         body += '<h3 id="source-' + item['id'] + '">' + html.escape(item['id'] + ' ' + item['title']) + '</h3><p>' + html.escape((item.get('citation', '') + ' · ' if item.get('citation') else '') + item['date'] + ' · ' + item['status']) + ' · <a href="' + html.escape(item['url'], quote=True) + '">查看来源</a></p>'
-    body += '</section>'
+    body += '</section><section id="copyright" class="chapter"><h2>版权说明</h2>' + copyright_body + '</section>'
     css = 'body{max-width:850px;margin:40px auto;padding:0 22px;background:#faf9f4;color:#23392f;font:16px/1.85 -apple-system,"PingFang SC",sans-serif}h1{font-size:34px;line-height:1.4}h2{margin-top:48px}h3{font-size:22px;line-height:1.5}a{color:#225a43}nav,button{font:inherit}button{cursor:pointer}article{border-top:1px solid #dce1d7;padding-top:20px;margin:30px 0;scroll-margin-top:20px}dt{font-size:16px;color:#355d43;font-weight:650;margin-top:22px}dd{margin:8px 0 0;overflow-wrap:anywhere}.example{background:#f0f5ee;border:1px solid #d2dfce;border-radius:6px;padding:8px 12px;width:fit-content;max-width:100%}h4{font-size:16px;color:#355d43;margin:20px 0 8px}#practice p,#practice ul{margin:12px 0}#practice .example{margin-top:8px}@media(max-width:600px){body{margin:24px auto;padding:0 16px}h1{font-size:28px}h3{font-size:21px}.example{padding:8px 10px}}.muted{color:#64736b}@media print{body{background:white;margin:0;font-size:11pt}nav{display:none}.chapter{break-before:page}h3,dt{break-after:avoid}dd{orphans:3;widows:3}a{color:inherit;text-decoration:none}}'
     (ROOT / '阅读全文.html').write_text('<!doctype html><html lang="zh-CN">' + FAVICON + '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + html.escape(meta['name']) + ' · 完整阅读</title><style>' + css + '</style><body>' + body + '</body></html>', encoding='utf-8')
     # ASCII-path copies keep GitHub entry points accessible; Chinese files remain the source.

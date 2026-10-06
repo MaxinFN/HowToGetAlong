@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 import re
 from urllib.parse import quote, unquote, urlsplit
-from site_assets import FAVICON
+from site_assets import FAVICON, COPYRIGHT_NOTICE
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = 'https://github.com/kkk-bot/HowToGetAlong'
@@ -22,6 +22,7 @@ PAGES = {
     'docs/verification.md': 'docs/verification.html',
     'docs/editorial-guide.md': 'docs/editorial-guide.html',
     'docs/使用指南.md': 'docs/usage.html',
+    'docs/版权说明.md': 'docs/copyright.html',
     'docs/平台调研.md': 'docs/sources.html',
     'docs/孙子兵法学习笔记.md': 'docs/strategy-notes.html',
     'docs/访谈与博客学习笔记.md': 'docs/interview-notes.html',
@@ -324,6 +325,8 @@ def build_page(source: str, output: str, project_name: str) -> None:
                 '<header><div class="top"><a class="brand" href="' + html.escape(relative('index.html', output), quote=True)
                 + '">' + html.escape(project_name) + '</a><nav aria-label="站点导航">' + nav + '</nav></div></header>'
                 '<main>' + body + '</main><footer><p>根据自己的关系与条件选择做法。示例可以调整，经验建议未验证效果。</p>'
+                '<p>' + html.escape(COPYRIGHT_NOTICE) + ' · <a href="'
+                + html.escape(relative('docs/copyright.html', output), quote=True) + '">版权说明</a></p>'
                 '<p class="footer-links">' + nav + '<a href="' + html.escape(source_url, quote=True)
                 + '">查看 Markdown 源文档</a></p></footer>' + (NOTES_SCRIPT if notes else '') + '</body></html>\n')
     (ROOT / output).parent.mkdir(parents=True, exist_ok=True)

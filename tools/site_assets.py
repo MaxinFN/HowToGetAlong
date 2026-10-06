@@ -1,5 +1,10 @@
 """Shared, self-contained assets for online and offline reading pages."""
 from urllib.parse import quote
+import json
+from pathlib import Path
+
+COPYRIGHT_NOTICE = json.loads((Path(__file__).resolve().parents[1] / 'project.json')
+                              .read_text(encoding='utf-8'))['copyright']
 
 _ICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
          '<rect width="32" height="32" rx="7" fill="#225a43"/>'

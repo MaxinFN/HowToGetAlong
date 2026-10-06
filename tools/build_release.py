@@ -51,6 +51,7 @@ def validate():
         if source.read_bytes() != (snapshots / 'book' / chapter['file']).read_bytes():
             raise ValueError(f'Skill 正文快照过期：{source.name}')
     for original, snapshot in [('docs/交流复盘与场景练习.md', '交流复盘与场景练习.md'),
+                               ('docs/版权说明.md', '版权说明.md'),
                                ('docs/Morris账号整理/学习笔记.md', 'Morris账号公开内容学习笔记.md'),
                                ('docs/研究资料整理.md', '研究资料整理.md'),
                                ('docs/平台素材收集-2026-10-04.md', '平台素材收集-2026-10-04.md'),
@@ -88,6 +89,11 @@ def validate():
             raise ValueError(f'完整 Markdown 正文过期：{chapter["file"]}')
     if (ROOT / 'docs/交流复盘与场景练习.md').read_text(encoding='utf-8').strip() not in full:
         raise ValueError('完整 Markdown 练习过期')
+    copyright_text = (ROOT / 'docs/版权说明.md').read_text(encoding='utf-8').strip()
+    if copyright_text not in full:
+        raise ValueError('完整 Markdown 版权说明过期')
+    if meta['copyright'] not in copyright_text:
+        raise ValueError('版权署名与项目元信息不一致')
     for entry in entries:
         if f'### {entry["id"].split(".")[1]}. {entry["title"]}' not in full:
             raise ValueError(f'完整 Markdown 缺少条目：{entry["id"]}')
@@ -105,6 +111,8 @@ def validate():
             raise ValueError(f'文档阅读页过期：{output}')
     for name in PAGES:
         file = ROOT / name
+        if meta['copyright'] not in file.read_text(encoding='utf-8'):
+            raise ValueError(f'网页版权说明缺失：{name}')
         parsed[file] = Links(file.read_text(encoding='utf-8'))
     for file, page in list(parsed.items()):
         for link in page.links:
@@ -139,6 +147,8 @@ def validate():
                 if pdf.get_destination_page_number(item) is None:
                     raise ValueError(f'PDF 书签没有有效页面：{item.title}')
     visit(pdf.outline)
+    if '版权说明' not in outline_titles or meta['copyright'] not in pdf.pages[-1].extract_text():
+        raise ValueError('PDF 缺少版权说明或书签')
     for entry in entries:
         if f'{entry["id"]} {entry["title"]}' not in outline_titles:
             raise ValueError(f'PDF 缺少条目书签：{entry["id"]}')
