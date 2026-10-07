@@ -97,6 +97,9 @@ search.query('5.7');
 assert.equal(search.cards.size, 0, 'Entry-number search must respect selected filters');
 search.element('chapter').value = '';
 for (const [query, target] of [
+  ['改作业', 'entry-1.1'], ['同学让我改作业', 'entry-1.1'],
+  ['帮同学改作业', 'entry-1.1'], ['帮忙改作业', 'entry-1.1'],
+  ['改 作业', 'entry-1.1'], ['改作业怎么办？', 'entry-1.1'],
   ['推荐信', 'entry-2.7'], ['老师写推荐信', 'entry-2.7'],
   ['朋友分享好消息', 'entry-6.7'], ['朋友拿到offer', 'entry-6.7'],
   ['不想去聚餐', 'entry-7.11'], ['还不确定能不能去', 'entry-7.11'],
@@ -145,6 +148,8 @@ for (const [query, target] of [
 }
 search.query('送礼火星矿石');
 assert.equal(search.cards.size, 0, 'Unknown content must not become a broad gift search');
+search.query('改作业火星矿石');
+assert.equal(search.cards.size, 0, 'Homework aliases must preserve unknown query content');
 search.query('offer 催我答复 火星矿石');
 assert.equal(search.cards.size, 0, 'Space-tolerant matching must preserve unknown words');
 search.query('怎么送礼');

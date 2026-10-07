@@ -26,6 +26,7 @@ for (const [id, key] of [['topic', '主题'], ['person', '对象']]) {
 // A small, inspectable phrase dictionary, rather than splitting every Chinese
 // character. Specific phrases such as “借钱不还” are consumed before “借钱”.
 const concepts = [
+  { aliases: ['同学让我改作业', '同学找我改作业', '帮同学改作业', '帮忙改作业', '帮我改作业', '帮改作业', '改作业'], matches: ['同学找你帮忙', '代做'] },
   { aliases: ['找老师写推荐信', '老师写推荐信', '请求推荐信', '写推荐信', '推荐信'], matches: ['推荐信'] },
   { aliases: ['朋友分享好消息', '朋友拿到offer', '朋友考上了', '朋友上岸了', '祝贺朋友', '好消息'], matches: ['好消息', '祝贺'] },
   { aliases: ['不想去聚餐', '不想参加聚会', '不想参加活动', '拒绝聚餐邀请', '拒绝邀请', '拒绝邀约', '还不确定能不能去', '到时候再看'], matches: ['不参加活动', '待定'] },
