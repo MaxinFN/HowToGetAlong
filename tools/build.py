@@ -171,6 +171,9 @@ def main():
     (refs / 'v1.17整合记录.md').write_text((ROOT / 'docs/核实记录/v1.17说明.md').read_text(encoding='utf-8').replace('../章节扩充资料-2026-10-04.md', '章节扩充资料-2026-10-04.md').replace('../../阅读全文.html', 'https://kkk-bot.github.io/HowToGetAlong/阅读全文.html'), encoding='utf-8')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [章节扩充资料](章节扩充资料-2026-10-04.md)\n- [v1.17 章节扩充整合记录](v1.17整合记录.md)\n')
+    shutil.copyfile(ROOT / 'docs/补充资料-2026-10-07.md', refs / '补充资料-2026-10-07.md')
+    with (refs / '目录.md').open('a', encoding='utf-8') as stream:
+        stream.write('\n- [求建议、协商与信息核查资料](补充资料-2026-10-07.md)\n')
     if meta['version'] != '1.17':
         current_record = ROOT / f'docs/核实记录/v{meta["version"]}说明.md'
         current_snapshot = f'v{meta["version"]}整合记录.md'

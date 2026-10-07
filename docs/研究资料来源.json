@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-05",
+  "date": "2026-10-07",
   "sources": [
     {
       "id": "P01",
@@ -224,6 +224,69 @@
       "url": "https://faculty.wharton.upenn.edu/wp-content/uploads/2015/02/2.-Savitsky-Comm-Bias.pdf",
       "citation": "Savitsky, K., Keysar, B., Epley, N., Carter, T., & Swanson, A. (2011). The closeness-communication bias: Increased egocentrism among friends versus strangers. Journal of Experimental Social Psychology. DOI：10.1016/j.jesp.2010.09.005。",
       "status": "已读论文正文的方法、结果与讨论；未对图表作独立统计复算。",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P24",
+      "title": "主动征求面向下一次的改进建议",
+      "date": "2025-07-22 在线；2026 卷期；核实日期 2026-10-07",
+      "url": "https://pubsonline.informs.org/doi/10.1287/mnsc.2022.03207",
+      "citation": "Blunden, H., Kristal, A., Whillans, A. V., Yoon, J., Burd, H., Bremner, G., & Yeomans, M. Eliciting Advice Instead of Feedback Improves Developmental Input. Management Science, 72(3), 2247–2266. DOI：10.1287/mnsc.2022.03207。",
+      "status": "已通过共同作者公开 PDF 读取研究设计、结果、讨论和边界条件；未独立复算数据",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P25",
+      "title": "失约后以实际兑现观察信任恢复",
+      "date": "2006；核实日期 2026-10-07",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0749597806000665",
+      "citation": "Schweitzer, M. E., Hershey, J. C., & Bradlow, E. T. (2006). Promises and Lies: Restoring Violated Trust. Organizational Behavior and Human Decision Processes, 101(1), 1–19. DOI：10.1016/j.obhdp.2006.05.005。",
+      "status": "取得论文检索摘要及方法片段，读完沃顿学院官方研究介绍；未成功取得原论文全文，不标为全文核对",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P26",
+      "title": "问完别人的情况后，不立即只讲自己的答案",
+      "date": "2025-01-09 在线；2025-03 卷期；核实日期 2026-10-07",
+      "url": "https://spiral.imperial.ac.uk/entities/publication/714aec36-1023-4cde-bedf-3de8da60f958",
+      "citation": "Brooks, A. W., & Yeomans, M. (2025). Boomerasking: Answering Your Own Questions. Journal of Experimental Psychology: General, 154(3), 864–893. DOI：10.1037/xge0001693。",
+      "status": "已读帝国理工存档 PDF 的研究概述、相关实验和限制；未独立复算数据",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P27",
+      "title": "联系时可协商文字或包含声音的互动",
+      "date": "2020-09-10 在线；2021 卷期；核实日期 2026-10-07",
+      "url": "https://doi.org/10.1037/xge0000962",
+      "citation": "Kumar, A., & Epley, N. (2021). It’s Surprisingly Nice to Hear You: Misunderstanding the Impact of Communication Media Can Lead to Suboptimal Choices of How to Connect With Others. Journal of Experimental Psychology: General, 150(3), 595–607. DOI：10.1037/xge0000962。",
+      "status": "通过作者公开发表列表链接取得论文版本，读方法、结果及后续问题；不将实验中的通话理解为异步语音消息",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P28",
+      "title": "建设性讨论前的担心与实际回应",
+      "date": "2024-01-15 在线；2024 卷期；核实日期 2026-10-07",
+      "url": "https://www.yorku.ca/gradstudies/supervisiontoolkit/wp-content/uploads/sites/370/2025/05/Surprisingly-Good-Talk-Misunderstanding-Others-Create-a-Barrier-to-Constructive-Confrontation-2024-Article.pdf",
+      "citation": "Dungan, J. A., & Epley, N. (2024). Surprisingly Good Talk: Misunderstanding Others Creates a Barrier to Constructive Confrontation. Journal of Experimental Psychology: General, 153(3), 779–797. DOI：10.1037/xge0001528。",
+      "status": "已读约克大学提供 PDF 的摘要、室友与伴侣实验、讨论和一般化限制；未独立复算数据",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P29",
+      "title": "共同协商时比较多个真实可行的组合",
+      "date": "2019；核实日期 2026-10-07",
+      "url": "https://researchmgt.monash.edu/ws/portalfiles/portal/274825846/274619042_oa.pdf",
+      "citation": "Leonardelli, G. J., Gu, J., McRuer, G., Medvec, V. H., & Galinsky, A. D. (2019). Multiple Equivalent Simultaneous Offers (MESOs) Reduce the Negotiator Dilemma: How a Choice of First Offers Increases Economic and Relational Outcomes. Organizational Behavior and Human Decision Processes, 152, 64–83. DOI：10.1016/j.obhdp.2019.01.007。",
+      "status": "已读莫纳什大学论文存档的方法、结果与讨论，并读哈佛 PON 实践介绍；未独立复算数据。PON 页面更新日期不当作论文日期",
+      "material_type": "研究论文"
+    },
+    {
+      "id": "P30",
+      "title": "离开陌生页面，核查证据与独立说明",
+      "date": "2022；机构摘要 2022-04-14；核实日期 2026-10-07",
+      "url": "https://cor.inquirygroup.org/research/lateral-reading-on-the-open-internet/",
+      "citation": "Wineburg, S., Breakstone, J., McGrew, S., Smith, M. D., & Ortega, T. (2022). Lateral Reading on the Open Internet: A District-Wide Field Study in High School Government Classes. Journal of Educational Psychology, 114(5), 893–909. DOI：10.1037/edu0000740。",
+      "status": "已读研究团队机构摘要、检索可见的作者稿摘要和机构课程简介；未取得论文全文，未观看课程视频",
       "material_type": "研究论文"
     }
   ]

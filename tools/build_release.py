@@ -52,6 +52,7 @@ def validate():
             raise ValueError(f'Skill 正文快照过期：{source.name}')
     for original, snapshot in [('docs/交流复盘与场景练习.md', '交流复盘与场景练习.md'),
                                ('docs/版权说明.md', '版权说明.md'),
+                               ('docs/补充资料-2026-10-07.md', '补充资料-2026-10-07.md'),
                                ('docs/Morris账号整理/学习笔记.md', 'Morris账号公开内容学习笔记.md'),
                                ('docs/研究资料整理.md', '研究资料整理.md'),
                                ('docs/平台素材收集-2026-10-04.md', '平台素材收集-2026-10-04.md'),

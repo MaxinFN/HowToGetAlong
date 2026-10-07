@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-05",
+  "date": "2026-10-07",
   "sources": [
     {
       "id": "A06",
@@ -144,6 +144,15 @@
       "citation": "西安体育学院学生工作部：《用一座心桥，联结每一份真诚的成长——“心桥计划”心理委员人际关系成长团辅活动圆满开展》。",
       "status": "已读学校活动报道；不是活动录像、完整课程或效果评估报告。",
       "material_type": "高校活动报道"
+    },
+    {
+      "id": "A22",
+      "title": "入职伙伴的流程帮助与主管职责",
+      "date": "发布日期未标明；核实日期 2026-10-07",
+      "url": "https://ucanr.edu/dept/human-resources/onboarding-buddy-guide",
+      "citation": "University of California Agriculture and Natural Resources, Human Resources. Onboarding Buddy Guide.",
+      "status": "已读官方指南完整正文；属于机构实践建议，非效果实验",
+      "material_type": "机构实践指南"
     }
   ]
 }

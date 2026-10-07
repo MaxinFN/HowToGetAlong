@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-03",
+  "date": "2026-10-07",
   "sources": [
     {
       "id": "R01",
@@ -58,6 +58,15 @@
       "citation": "UC Berkeley Greater Good Science Center. The Science of Happiness: Finding Common Ground in Uncomfortable Times. Guests: Jesse Kelly Jr., Lia Howard.",
       "status": "已读网页节目说明及访谈文字稿；未播放音视频，未独立复核节目提到的全部研究。",
       "material_type": "访谈文字稿"
+    },
+    {
+      "id": "R15",
+      "title": "困难谈话中停顿、核对期待与具体请求",
+      "date": "2021-10-15；核实日期 2026-10-07",
+      "url": "https://www.gsb.stanford.edu/insights/space-pace-grace-how-handle-challenging-conversations",
+      "citation": "Stanford GSB, Think Fast, Talk Smart, Episode 42. Space, Pace, and Grace: How to Handle Challenging Conversations. Collins Dobbs and Matt Abrahams.",
+      "status": "检索工具直接打开返回 403；普通公开网页请求取得官方转录正文并已读取，未收听音频；不是效果实验",
+      "material_type": "官方访谈文字稿"
     }
   ]
 }

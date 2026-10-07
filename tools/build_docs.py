@@ -28,6 +28,7 @@ PAGES = {
     'docs/访谈与博客学习笔记.md': 'docs/interview-notes.html',
     'docs/研究资料整理.md': 'docs/research-notes.html',
     'docs/补充资料-2026-10-06.md': 'docs/supplemental-notes.html',
+    'docs/补充资料-2026-10-07.md': 'docs/supplemental-notes-2026-10-07.html',
     'docs/平台素材收集-2026-10-04.md': 'docs/platform-notes.html',
     'docs/章节扩充资料-2026-10-04.md': 'docs/chapter-materials.html',
     'docs/Morris账号整理/学习笔记.md': 'docs/Morris账号整理/阅读笔记.html',
