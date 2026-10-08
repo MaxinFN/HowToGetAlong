@@ -1,6 +1,7 @@
 """Generate the complete PDF from 完整指南.md (requires reportlab)."""
 import argparse
 import hashlib
+import json
 from pathlib import Path
 import re
 from urllib.parse import urljoin
@@ -172,7 +173,8 @@ def build(input_path=ROOT / '完整指南.md', output_path=OUT,
     entries, sources = discover_targets(lines)
     body, chapter, heading, example = styles()
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    story = [Spacer(1, 34), Image(str(ROOT / 'docs/assets/cover-growth-v120.png'),
+    meta = json.loads((ROOT / 'project.json').read_text(encoding='utf-8'))
+    story = [Spacer(1, 34), Image(str(ROOT / meta.get('cover', 'docs/assets/cover-growth-v120.png')),
              width=A4[0] - 92, height=(A4[0] - 92) * 2 / 3), Spacer(1, 30)]
     first_title, in_body, in_sources = True, False, False
     chapter_number, chapter_index = None, 0
@@ -215,7 +217,7 @@ def build(input_path=ROOT / '完整指南.md', output_path=OUT,
                 story.append(Paragraph(markup(title), heading))
         else:
             text = line[2:] if line.startswith('- ') else line
-            style = example if text.startswith(('可以怎么说：', '原创示例：')) else body
+            style = example if text.startswith(('可以怎么说：', '原创示例：', '你先说：', '你先回应：', '你再回应：', '如果仍被')) else body
             related = text.startswith('相关条目：')
             rendered = markup(text, entries, sources, link_entries=related or in_sources)
             if in_body:

@@ -24,7 +24,8 @@ def read_entries():
         for i in range(1, len(parts), 3):
             number, title, body = int(parts[i]), parts[i + 1], parts[i + 2]
             numbers.append(number)
-            pairs = re.findall(r'^- ([^：\n]+)：(.+)$', body, re.M)
+            pairs = re.findall(r'^- ([^：\n]+)：([^\n]+(?:\n[ \t]+[^\n]+)*)', body, re.M)
+            pairs = [(key, re.sub(r'\n[ \t]+', '\n', value)) for key, value in pairs]
             fields = dict(pairs)
             if len(pairs) != len(fields):
                 raise ValueError(f'{file.name} 第{number}条字段重复')
@@ -86,7 +87,14 @@ def main():
     page = page.replace('<head>', '<head>' + FAVICON, 1)
     page = page.replace('__NAME__', html.escape(meta['name']))
     page = page.replace('__SEARCH_SCRIPT__', (ROOT / 'tools/search.js').read_text(encoding='utf-8'))
-    page = page.replace('<a href="docs/research-notes.html">论文与文章资料</a>', '<a href="docs/research-notes.html">论文与文章资料</a> · <a href="docs/platform-notes.html">短视频与网络素材</a>')
+    source_data = json.dumps(load_sources(), ensure_ascii=False).replace('<', '\\u003c')
+    page = page.replace('<script id="entries"', '<script id="source-data" type="application/json">' + source_data + '</script>\n<script id="entries"', 1)
+    page = page.replace('</style>', '''
+.saved-filter{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:var(--muted)}.saved-filter input{width:18px;height:18px;padding:0;accent-color:var(--green)}.card-actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.card-actions button,.card-actions a{font-size:12px;line-height:1.6;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:#f7f9f4;text-decoration:none}.card-actions button[aria-pressed="true"]{background:#e3eee1;border-color:#91b392}.field-lines p{margin:0 0 9px}.field-lines p:last-child{margin-bottom:0}.source-ref{font-weight:600}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 36px);padding:10px 16px;border-radius:8px;background:#20382f;color:white;font-size:13px;box-shadow:0 4px 20px #0002;z-index:10}.toast:empty{display:none}dialog{border:1px solid var(--line);border-radius:12px;padding:22px;width:min(620px,calc(100% - 36px));max-height:85vh;overflow:auto;background:var(--paper);color:var(--ink)}dialog::backdrop{background:#0005}dialog h2{font-size:20px;margin:0 0 12px}dialog label{display:block;font-size:14px;margin:10px 0}dialog textarea{width:100%;min-height:180px;resize:vertical;font:inherit;font-size:14px;line-height:1.8;color:var(--ink);padding:10px;border:1px solid #b8c8bc;border-radius:6px}dialog p{font-size:13px}button:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid #9fc6af;outline-offset:3px}@media print{.card-actions,.saved-filter,.toast,dialog{display:none}}
+</style>''', 1)
+    page = page.replace('<div class="search-actions">', '<label class="saved-filter"><input id="saved-only" type="checkbox">只看收藏（<span id="saved-count">0</span>）</label><div class="search-actions">', 1)
+    page = page.replace('</main>', '</main><div id="action-status" class="toast" role="status" aria-live="polite"></div><dialog id="copy-dialog" aria-labelledby="copy-title"><h2 id="copy-title">手动复制</h2><p id="copy-help">浏览器没有允许自动复制，文字已选中，可使用系统的复制操作。</p><label for="copy-text">待复制的内容</label><textarea id="copy-text" readonly></textarea><p><button id="close-copy" type="button">关闭</button></p></dialog>', 1)
+    page = page.replace('<a href="docs/research-notes.html">论文与文章资料</a>', '<a href="docs/research-notes.html">论文与文章资料</a> · <a href="docs/platform-notes.html">短视频与网络素材</a> · <a href="docs/feedback.html">读者反馈与案例征集</a>')
     page = page.replace('FIRST EDITION', 'PRACTICAL GUIDE')
     page = page.replace('<a href="README.md">项目说明 ↗</a>', '<span class="navlinks"><a href="阅读全文.html">阅读全文 ↗</a><a href="downloads/人情世故指南.pdf" download>下载 PDF</a><a href="docs/practice.html">场景练习</a><a href="about.html">项目说明 ↗</a></span>')
     page = page.replace('这是经验建议初稿，没有验证成功率', '本版全部为经验建议，未验证成功率')
@@ -172,8 +180,9 @@ def main():
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
         stream.write('\n- [章节扩充资料](章节扩充资料-2026-10-04.md)\n- [v1.17 章节扩充整合记录](v1.17整合记录.md)\n')
     shutil.copyfile(ROOT / 'docs/补充资料-2026-10-07.md', refs / '补充资料-2026-10-07.md')
+    shutil.copyfile(ROOT / 'docs/读者反馈与案例征集.md', refs / '读者反馈与案例征集.md')
     with (refs / '目录.md').open('a', encoding='utf-8') as stream:
-        stream.write('\n- [求建议、协商与信息核查资料](补充资料-2026-10-07.md)\n')
+        stream.write('\n- [求建议、协商与信息核查资料](补充资料-2026-10-07.md)\n- [读者反馈与案例征集](读者反馈与案例征集.md)\n')
     if meta['version'] != '1.17':
         current_record = ROOT / f'docs/核实记录/v{meta["version"]}说明.md'
         current_snapshot = f'v{meta["version"]}整合记录.md'
@@ -214,16 +223,16 @@ def main():
         for entry in [e for e in entries if e['chapter'] == chapter['number']]:
             body += f'<article id="entry-{entry["id"]}"><h3>{entry["id"]} {html.escape(entry["title"])}</h3><dl>'
             for key, value in entry['fields'].items():
-                escaped = html.escape(value)
+                escaped = html.escape(value).replace('\n', '<br>')
                 if key == '相关条目':
                     escaped = re.sub(r'(\d+\.\d+)（([^）]+)）', r'<a href="#entry-\1">\1（\2）</a>', escaped)
                 elif key == '可以怎么说':
-                    escaped = re.sub(r'(（示例仅供参考，请根据事实情况调整。）)(?=.)', r'\1<br><br>', escaped)
+                    escaped = re.sub(r'(（示例仅供参考，请根据事实情况调整。）)(?=[^<])', r'\1<br><br>', escaped)
                 elif key == '依据':
                     escaped = re.sub(r'\b([SRPA]\d{2})\b', r'<a href="#source-\1">\1</a>', escaped)
                 body += '<dt>' + html.escape(key) + '</dt><dd' + (' class="example"' if key == '可以怎么说' else '') + '>' + escaped + '</dd>'
             body += '</dl></article>'
-    body += '<section id="practice" class="chapter">'
+    body += '<p><a href="docs/feedback.html">读者反馈与案例征集</a> · <a href="https://github.com/kkk-bot/HowToGetAlong/issues/new?template=reading-feedback.yml">填写反馈</a></p><section id="practice" class="chapter">'
     for block in practice.strip().split('\n\n'):
         block = block.strip()
         if block.startswith('# '):

@@ -1,6 +1,6 @@
 # 人情世故指南
 
-![人情世故指南封面](docs/assets/cover-growth-v120.png)
+![人情世故指南封面](docs/assets/cover-growth-v121.png)
 
 ## 项目简介
 
@@ -10,7 +10,7 @@
 
 从合作、求助、拒绝，到金钱、礼节和冲突，每条都写清判断关键、行动前准备、具体做法、示例表达、可能效果、代价和例外。希望帮助你少走弯路，更清楚地理解人与事，逐步学会怎么做、怎么说，在进入社会后更从容地处理具体问题。你可以选择相近的场景试用，再根据自己的关系与环境调整。
 
-10 章 73 条 · 全部为经验建议。
+10 章 76 条 · 全部为经验建议。
 
 > **免责声明：仅供参考。** 本项目内容仅供学习与交流参考，属于经验建议，不保证适用于所有人或取得特定效果。具体问题请根据事实情况分析，结合自身处境、关系与适用规则独立判断，不宜直接照搬示例。
 
@@ -21,6 +21,7 @@
 | 下载 | [PDF](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/downloads/%E4%BA%BA%E6%83%85%E4%B8%96%E6%95%85%E6%8C%87%E5%8D%97.pdf) · [HTML 检索页](https://kkk-bot.github.io/HowToGetAlong/downloads/html.html) · [Markdown](https://github.com/kkk-bot/HowToGetAlong/raw/refs/heads/main/%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97.md) · [项目 ZIP](https://github.com/kkk-bot/HowToGetAlong/archive/refs/heads/main.zip) |
 | 阅读 | [完整文字版](完整指南.md) · [使用指南](https://kkk-bot.github.io/HowToGetAlong/docs/usage.html) |
 | 练习 | [交流复盘与场景练习](https://kkk-bot.github.io/HowToGetAlong/docs/practice.html) |
+| 反馈 | [读者反馈与案例征集](https://kkk-bot.github.io/HowToGetAlong/docs/feedback.html) · [填写读者反馈](https://github.com/kkk-bot/HowToGetAlong/issues/new?template=reading-feedback.yml) |
 | 查阅 | [依据与核实记录](https://kkk-bot.github.io/HowToGetAlong/docs/verification.html) · [编写与纠错规范](https://kkk-bot.github.io/HowToGetAlong/docs/editorial-guide.html) · [论文与文章资料](https://kkk-bot.github.io/HowToGetAlong/docs/research-notes.html) · [访谈与博客笔记](https://kkk-bot.github.io/HowToGetAlong/docs/interview-notes.html) · [来源索引](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html#sources) |
 
 点击上方“阅读与检索”或“连续阅读”可直接在线阅读。需要离线使用时，下载项目 ZIP，解压后用浏览器打开 `index.html` 或 `阅读全文.html`。
@@ -33,12 +34,12 @@
 
 | 问题 | 去哪看 |
 |---|---|
-| 同学反复求助、小组分工不清、室友擅用物品，怎么开口？ | [1. 校园合作](book/01-校园合作.md) |
+| 同学反复求助、小组分工不清、室友擅用物品、被要求代签到，怎么开口？ | [1. 校园合作](book/01-校园合作.md) |
 | 怎么求人帮忙、请求推荐信、跟进消息，答应了做不到怎么办？ | [2. 求助与回报](book/02-求助与回报.md) |
-| 同事临时加活、任务撞期、被批评、犯错或想求改进建议，怎么处理？ | [3. 实习与职场](book/03-实习与职场.md) |
+| 同事临时加活、任务撞期、被批评、犯错、求改进建议或被拉进八卦，怎么处理？ | [3. 实习与职场](book/03-实习与职场.md) |
 | 朋友借钱、迟还、垫款、随礼超预算，怎么决定？ | [4. 朋友与金钱](book/04-朋友与金钱.md) |
 | 饭局敬酒怎么说、不想喝酒、发合照、被问隐私或看到别人被冒犯，怎么回应？ | [5. 饭局、隐私与冲突](book/05-饭局隐私与冲突.md) |
-| 怎么保持联系、回应好消息、分担责任、倾听和调整关系距离？ | [6. 长期关系与边界](book/06-长期关系与边界.md) |
+| 怎么保持联系、回应好消息、分担责任、倾听、应对关系施压和调整距离？ | [6. 长期关系与边界](book/06-长期关系与边界.md) |
 | 邀请与拒绝、介绍、做客、聊天、夸赞、聚餐与接待，怎么做更清楚？ | [7. 社交礼节与场合](book/07-社交礼节与场合.md) |
 | 怎么提意见、开会、确认要求、核实消息、协商备选方案和暂停冲突？ | [8. 协作与表达](book/08-协作与表达.md) |
 | 家人干预选择、催问隐私、共同花钱、陪伴和关系结束怎么谈？ | [9. 家庭与亲密关系](book/09-家庭与亲密关系.md) |
@@ -51,6 +52,9 @@
 - 打开 [连续阅读版](https://kkk-bot.github.io/HowToGetAlong/%E9%98%85%E8%AF%BB%E5%85%A8%E6%96%87.html)，从头阅读全部章节，并可用浏览器打印或保存为 PDF。
 - 下载 [完整文字版](完整指南.md)，离线阅读或继续编辑。
 - 不知道从哪里开始，先看 [使用指南](https://kkk-bot.github.io/HowToGetAlong/docs/usage.html)。
+- 条目支持复制示例、收藏和分享。收藏保存在当前浏览器；复制不可用时可手动选择文本。分享链接指向公开在线条目。
+- 8 个场景新增接续对话，展开后可查看第一次表达、后续回应和调整信号；均为编写情境。
+- 想提出用词、检索或场景建议，可查看[读者反馈与案例征集](docs/读者反馈与案例征集.md)。
 - 喜欢纯文字，可以按下面的问题读 `book/` 正文。
 - 每条的“可以怎么说”都是本项目拟写的示例，不是平台原话，也不保证对方接受。
 - 展开“准备、不同情境与调整信号”，区分普通朋友、亲近关系、职责内请求等条件，别只照搬一句话。
@@ -64,7 +68,7 @@
 |---|---|---|
 | 研究背景 | 原始研究来源、研究对象、主要结论与局限 | 已在部分条目注明背景与阅读范围；具体动作未逐条验证 |
 | 制度规定 | 官方文本、适用地区或机构、截至日期 | 暂无具体制度结论 |
-| 经验建议 | 标明为可选办法，列出代价、例外与失效可能 | 73 条 |
+| 经验建议 | 标明为可选办法，列出代价、例外与失效可能 | 76 条 |
 
 “可能换回什么”是编辑预期，不是已测得的效果。“花掉什么”包含时间、金钱、压力与关系代价。同一句话面对室友、老师、朋友或领导，效果可能不同。
 

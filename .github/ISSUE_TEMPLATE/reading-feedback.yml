@@ -1,0 +1,48 @@
+name: 读者反馈与场景建议
+description: 反馈找不到的场景、读不懂的步骤或不自然的表达。
+title: "[阅读反馈] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        谢谢你帮助改进指南。反馈公开显示，请去掉可识别信息，不附未经同意的聊天截图。只需反馈一处具体问题，不必真的试用或证明建议有效。
+  - type: input
+    id: entry
+    attributes:
+      label: 条目与版本
+      placeholder: 例如 4.1 / v1.21.0；没有相近条目可以写“缺少场景”
+  - type: input
+    id: query
+    attributes:
+      label: 查找关键词与筛选
+      placeholder: 例如“怎么拒绝朋友借钱”，选择第 4 章
+  - type: dropdown
+    id: experience
+    attributes:
+      label: 反馈依据
+      options:
+        - 仅阅读，没有尝试
+        - 模拟或编写情境
+        - 真实经历（已去掉识别信息）
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 哪一处需要改进？
+      description: 可以写找不到、下一步不清楚、表达不自然或遗漏的情境；提供具体原句或操作。
+      placeholder: 我想找……；这一句……我说不出口，因为……
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 你的建议或适用条件
+      description: 可选。说明关系、已有承诺等条件，不用提供姓名和单位。
+  - type: checkboxes
+    id: case-permission
+    attributes:
+      label: 匿名案例采用意愿（可选）
+      options:
+        - label: 我愿意作者进一步确认后，将我有权分享的情境匿名改写进项目；未勾选不代表授权。
+          required: false

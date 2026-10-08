@@ -42,6 +42,9 @@ def validate():
     entries, chapters = read_entries()
     snapshots = ROOT / 'skills/social-situations-guide/references'
     meta = json.loads((ROOT / 'project.json').read_text(encoding='utf-8'))
+    cover = (ROOT / meta.get('cover', 'docs/assets/cover-growth-v120.png')).resolve()
+    if not cover.is_relative_to(ROOT) or not cover.is_file():
+        raise ValueError('项目封面缺失或超出项目目录')
     if meta['version'] != '1.17':
         current_record = ROOT / f'docs/核实记录/v{meta["version"]}说明.md'
         if current_record.read_bytes() != (snapshots / f'v{meta["version"]}整合记录.md').read_bytes():
@@ -51,6 +54,7 @@ def validate():
         if source.read_bytes() != (snapshots / 'book' / chapter['file']).read_bytes():
             raise ValueError(f'Skill 正文快照过期：{source.name}')
     for original, snapshot in [('docs/交流复盘与场景练习.md', '交流复盘与场景练习.md'),
+                               ('docs/读者反馈与案例征集.md', '读者反馈与案例征集.md'),
                                ('docs/版权说明.md', '版权说明.md'),
                                ('docs/补充资料-2026-10-07.md', '补充资料-2026-10-07.md'),
                                ('docs/Morris账号整理/学习笔记.md', 'Morris账号公开内容学习笔记.md'),
@@ -102,6 +106,13 @@ def validate():
     data = re.search(r'<script id="entries" type="application/json">(.*?)</script>', index, re.S)
     if not data or json.loads(data[1]) != entries:
         raise ValueError('检索页正文数据与 book/ 不一致')
+    source_data = re.search(r'<script id="source-data" type="application/json">(.*?)</script>', index, re.S)
+    if not source_data or json.loads(source_data[1]) != load_sources():
+        raise ValueError('检索页来源数据过期')
+    for entry in entries:
+        dialogue = entry['fields'].get('接续对话', '')
+        if dialogue and ('编写情境' not in dialogue or '\n' not in dialogue):
+            raise ValueError(f'{entry["id"]} 接续对话缺少情境说明或续行')
     if (ROOT / 'tools/search.js').read_text(encoding='utf-8') not in index:
         raise ValueError('检索页脚本过期')
 

@@ -23,6 +23,7 @@ PAGES = {
     'docs/editorial-guide.md': 'docs/editorial-guide.html',
     'docs/使用指南.md': 'docs/usage.html',
     'docs/版权说明.md': 'docs/copyright.html',
+    'docs/读者反馈与案例征集.md': 'docs/feedback.html',
     'docs/平台调研.md': 'docs/sources.html',
     'docs/孙子兵法学习笔记.md': 'docs/strategy-notes.html',
     'docs/访谈与博客学习笔记.md': 'docs/interview-notes.html',

@@ -9,6 +9,105 @@ const normalize = value => String(value).normalize('NFKC').toLocaleLowerCase();
 const normalizeQuery = value => normalize(value).trim().replace(/[，。！？、；：,.;!?]+$/u, '').trim();
 const filterIds = ['query', 'chapter', 'topic', 'person'];
 let allExpanded = false;
+const sources = new Map(JSON.parse($('source-data').textContent || '[]')
+  .filter(source => /^https?:\/\//i.test(source.url)).map(source => [source.id, source]));
+const savedKey = 'howtogetalong.saved.v1';
+const entryIds = new Set(entries.map(entry => entry.id));
+function readSaved() {
+  try {
+    const data = JSON.parse(window.localStorage.getItem(savedKey) || '[]');
+    return new Set(Array.isArray(data) ? data.filter(id => entryIds.has(id)) : []);
+  } catch (_) { return new Set(); }
+}
+let saved = readSaved();
+let noticeTimer, copyTrigger;
+
+function notify(message) {
+  $('action-status').textContent = message;
+  if (window.setTimeout) {
+    window.clearTimeout(noticeTimer);
+    noticeTimer = window.setTimeout(() => { $('action-status').textContent = ''; }, 6500);
+  }
+}
+
+function renderField(key, value) {
+  if (key === '可以怎么说') value = value.replace(/(（示例仅供参考，请根据事实情况调整。）)(?=[^\n])/g, '$1\n');
+  let text = escape(value);
+  if (key === '依据') text = text.replace(/\b([SRPA]\d{2})\b/g, id => {
+    const source = sources.get(id);
+    return source ? `<a class="source-ref" href="${escape(source.url)}" target="_blank" rel="noopener noreferrer" title="${escape(source.title + ' · ' + source.status)}">${id}</a>` : id;
+  });
+  return value.includes('\n') ? `<div class="field-lines">${text.split('\n').map(line => `<p>${line}</p>`).join('')}</div>` : text;
+}
+
+function shareUrl(id) {
+  const url = new URL('https://kkk-bot.github.io/HowToGetAlong/');
+  url.hash = 'entry-' + id;
+  return url.href;
+}
+
+function feedbackUrl(id) {
+  const url = new URL('https://github.com/kkk-bot/HowToGetAlong/issues/new');
+  url.searchParams.set('template', 'reading-feedback.yml');
+  url.searchParams.set('title', '[阅读反馈] ' + id);
+  url.searchParams.set('entry', id);
+  return url.href;
+}
+
+async function copyText(text, message) {
+  try {
+    if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+    await navigator.clipboard.writeText(text);
+    notify(message);
+  } catch (_) {
+    copyTrigger = document.activeElement;
+    $('copy-text').value = text;
+    const dialog = $('copy-dialog');
+    if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); }
+    else dialog.setAttribute('open', '');
+    $('copy-text').focus();
+    $('copy-text').select();
+  }
+}
+
+function toggleSaved(id, button) {
+  if (!entryIds.has(id)) return;
+  if (saved.has(id)) saved.delete(id); else saved.add(id);
+  let persisted = true;
+  try { window.localStorage.setItem(savedKey, JSON.stringify([...saved])); }
+  catch (_) { persisted = false; }
+  const selected = saved.has(id);
+  if ($('saved-only').checked) {
+    render(false);
+    // Removing a saved card also removes its button; keep keyboard focus usable.
+    $('saved-only').focus();
+  }
+  else {
+    $('saved-count').textContent = saved.size;
+    if (button) {
+      button.textContent = selected ? '已收藏' : '收藏';
+      button.setAttribute('aria-pressed', String(selected));
+      button.setAttribute('aria-label', (selected ? '取消收藏条目 ' : '收藏条目 ') + id);
+    }
+  }
+  notify(persisted ? (selected ? '已收藏，保存在当前浏览器。' : '已取消收藏。') :
+    '浏览器不允许保存收藏；本次页面仍可使用，关闭后不会保留。');
+}
+
+async function handleAction(action, id, button) {
+  const entry = entries.find(entry => entry.id === id);
+  if (!entry) return;
+  if (action === 'save') { toggleSaved(id, button); return; }
+  if (action === 'copy') { await copyText(entry.fields['可以怎么说'], '示例已复制，请按事实情况调整。'); return; }
+  if (action === 'share') {
+    const url = shareUrl(id);
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try { await navigator.share({ title: '人情世故指南 · ' + id, text: entry.title, url }); return; }
+      catch (error) { if (error.name === 'AbortError') return; }
+    }
+    await copyText(url, '在线条目链接已复制。');
+  }
+}
 
 function options(id, values) {
   for (const [value, label] of values) {
@@ -26,6 +125,9 @@ for (const [id, key] of [['topic', '主题'], ['person', '对象']]) {
 // A small, inspectable phrase dictionary, rather than splitting every Chinese
 // character. Specific phrases such as “借钱不还” are consumed before “借钱”.
 const concepts = [
+  { aliases: ['朋友让我代签到', '帮忙代签到', '代签到', '代签', '冒用身份', '借账号参加考核'], matches: ['代签到', '冒用身份'] },
+  { aliases: ['同事让我站队', '被要求站队', '被拉进八卦', '办公室八卦', '八卦', '站队'], matches: ['八卦', '站队'] },
+  { aliases: ['朋友说不给面子', '不给我面子', '不给面子', '关系施压'], matches: ['不给面子', '关系施压'] },
   { aliases: ['同学让我改作业', '同学找我改作业', '帮同学改作业', '帮忙改作业', '帮我改作业', '帮改作业', '改作业'], matches: ['同学找你帮忙', '代做'] },
   { aliases: ['找老师写推荐信', '老师写推荐信', '请求推荐信', '写推荐信', '推荐信'], matches: ['推荐信'] },
   { aliases: ['朋友分享好消息', '朋友拿到offer', '朋友考上了', '朋友上岸了', '祝贺朋友', '好消息'], matches: ['好消息', '祝贺'] },
@@ -164,6 +266,7 @@ function filtered() {
   const core = questionCore(query);
   return searchIndex.filter(({ entry }) =>
     (!number || entry.id === number) &&
+    (!$('saved-only').checked || saved.has(entry.id)) &&
     (!$('chapter').value || String(entry.chapter) === $('chapter').value) &&
     (!$('topic').value || entry.tags['主题'].includes($('topic').value)) &&
     (!$('person').value || entry.tags['对象'].includes($('person').value))
@@ -187,6 +290,8 @@ function saveFilters(clearAnchor = false) {
     if (value) url.searchParams.set(parameter, value);
     else url.searchParams.delete(parameter);
   }
+  if ($('saved-only').checked) url.searchParams.set('saved', '1');
+  else url.searchParams.delete('saved');
   if (url.href !== location.href) {
     // Local files and restricted embedded browsers can disallow history changes;
     // filtering still works when the address cannot be changed.
@@ -201,17 +306,20 @@ function restoreFilters() {
     const value = params.get(id) || '';
     $(id).value = [...$(id).options].some(option => String(option.value) === value) ? value : '';
   }
+  $('saved-only').checked = params.get('saved') === '1';
 }
 
 function render(save = true, clearAnchor = false) {
   const shown = filtered();
+  $('saved-count').textContent = saved.size;
   $('count').textContent = `找到 ${shown.length} 条 / 共 ${entries.length} 条 · 依据：经验建议`;
   $('list').innerHTML = shown.length ? shown.map(entry => {
     const fields = entry.fields;
     const remaining = Object.entries(fields).filter(([key]) => !['遇到的情况', '判断关键', '先做什么', '可以怎么说', '相关条目'].includes(key));
     const targets = [...fields['相关条目'].matchAll(/(\d+\.\d+)（([^）]+)）/g)].map(match => `<a href="#entry-${match[1]}" data-ref="${match[1]}">${escape(match[1] + ' ' + match[2])}</a>`).join('');
-    return `<article class="card" id="entry-${entry.id}"><div class="cardhead"><span>第 ${entry.chapter} 章 · 第 ${entry.id.split('.')[1]} 条</span><span>经验建议</span></div><h2>${escape(entry.title)}</h2><p class="scene">${escape(fields['遇到的情况'])}</p><p class="judgment"><strong>判断关键</strong>${escape(fields['判断关键'])}</p><p class="action"><strong>先做什么</strong>${escape(fields['先做什么'])}</p><p class="example-label">可以怎么说</p><blockquote>${escape(fields['可以怎么说']).replaceAll('（示例仅供参考，请根据事实情况调整。）', '（示例仅供参考，请根据事实情况调整。）<br><br>').replace(/(<br><br>)$/, '')}</blockquote><div class="chips">${entry.tags['主题'].map(tag => `<span class="chip">${escape(tag)}</span>`).join('')}</div><details ${allExpanded ? 'open' : ''}><summary>查看准备、不同情境与调整信号</summary><dl>${remaining.map(([key, value]) => `<dt>${escape(key)}</dt><dd>${escape(value)}</dd>`).join('')}</dl><div class="refs">相关条目：${targets}</div><div class="source"><a href="阅读全文.html#chapter-${entry.chapter}">阅读本章正文 ↗</a></div></details></article>`;
-  }).join('') : '<div class="empty">没有找到相近条目。可以试试更具体的关键词，或清除筛选。</div>';
+    const selected = saved.has(entry.id);
+    return `<article class="card" id="entry-${entry.id}"><div class="cardhead"><span>第 ${entry.chapter} 章 · 第 ${entry.id.split('.')[1]} 条</span><span>经验建议</span></div><h2>${escape(entry.title)}</h2><p class="scene">${escape(fields['遇到的情况'])}</p><p class="judgment"><strong>判断关键</strong>${escape(fields['判断关键'])}</p><p class="action"><strong>先做什么</strong>${escape(fields['先做什么'])}</p><p class="example-label">可以怎么说</p><blockquote>${renderField('可以怎么说', fields['可以怎么说'])}</blockquote><div class="card-actions"><button type="button" data-action="copy" data-entry="${entry.id}">复制示例</button><button type="button" data-action="save" data-entry="${entry.id}" aria-pressed="${selected}" aria-label="${selected ? '取消收藏条目' : '收藏条目'} ${entry.id}">${selected ? '已收藏' : '收藏'}</button><button type="button" data-action="share" data-entry="${entry.id}">分享</button><a href="${escape(feedbackUrl(entry.id))}" target="_blank" rel="noopener noreferrer">反馈此条</a></div><div class="chips">${entry.tags['主题'].map(tag => `<span class="chip">${escape(tag)}</span>`).join('')}</div><details ${allExpanded ? 'open' : ''}><summary>查看准备、${fields['接续对话'] ? '接续对话' : '不同情境'}与调整信号</summary><dl>${remaining.map(([key, value]) => `<dt>${escape(key)}</dt><dd>${renderField(key, value)}</dd>`).join('')}</dl><div class="refs">相关条目：${targets}</div><div class="source"><a href="阅读全文.html#chapter-${entry.chapter}">阅读本章正文 ↗</a></div></details></article>`;
+  }).join('') : `<div class="empty">${$('saved-only').checked && saved.size === 0 ? '还没有收藏条目。取消“只看收藏”，找到需要的条目后点击“收藏”。' : '没有找到相近条目。可以试试更具体的关键词，或清除筛选。'}</div>`;
   $('expand').textContent = allExpanded ? '收起全部细节' : '展开全部细节';
   if (save) saveFilters(clearAnchor);
 }
@@ -219,18 +327,25 @@ function render(save = true, clearAnchor = false) {
 function applyFilters() { render(true, true); }
 function reset(clearAnchor = true) {
   for (const id of filterIds) $(id).value = '';
+  $('saved-only').checked = false;
   render(true, clearAnchor);
 }
 $('query').maxLength = 200;
 $('query').addEventListener('input', event => { if (!event.isComposing) applyFilters(); });
 $('query').addEventListener('compositionend', applyFilters);
 for (const id of ['chapter', 'topic', 'person']) $(id).addEventListener('change', applyFilters);
+$('saved-only').addEventListener('change', applyFilters);
 $('search-submit').addEventListener('click', applyFilters);
 $('query').addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.isComposing) { event.preventDefault(); applyFilters(); }
 });
 $('reset').addEventListener('click', () => reset());
 $('expand').addEventListener('click', () => { allExpanded = !allExpanded; render(); });
+$('close-copy').addEventListener('click', () => {
+  const dialog = $('copy-dialog');
+  if (typeof dialog.close === 'function') dialog.close(); else { dialog.removeAttribute('open'); copyTrigger?.focus(); }
+});
+$('copy-dialog').addEventListener('close', () => copyTrigger?.focus());
 
 function jump(id) {
   if (!entries.some(entry => entry.id === id)) return;
@@ -243,6 +358,11 @@ function jumpFromHash() {
   if (location.hash.startsWith('#entry-')) jump(location.hash.slice(7));
 }
 $('list').addEventListener('click', event => {
+  const button = event.target.closest('button[data-action]');
+  if (button?.dataset.action) {
+    handleAction(button.dataset.action, button.dataset.entry, button).catch(() => notify('操作未完成，请重试。'));
+    return;
+  }
   const link = event.target.closest('a[data-ref]');
   if (!link) return;
   // Modified clicks belong to the browser (new tab/window, download, etc.).
@@ -261,6 +381,9 @@ $('list').addEventListener('click', event => {
 });
 window.addEventListener('hashchange', jumpFromHash);
 window.addEventListener('popstate', () => { restoreFilters(); render(false); jumpFromHash(); });
+window.addEventListener('storage', event => {
+  if (event.key === savedKey || event.key === null) { saved = readSaved(); render(false); jumpFromHash(); }
+});
 restoreFilters();
 render();
 jumpFromHash();
